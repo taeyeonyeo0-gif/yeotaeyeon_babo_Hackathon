@@ -57,27 +57,38 @@ test('A-to-B and B-to-A routes follow the same active graph in reverse', () => {
   }
 });
 
-test('a repeated projection cannot replace the original snap edge', () => {
+test('a repeated projection keeps the canonical physical edge', () => {
   const place = data.places.find(value => value.name === '강동역 1번 출구');
   const destination = data.places.find(value => value.name === '강동경찰서 천호지구대');
   const firstSnap = engine.nearest(place.p);
   const repeatedSnap = engine.nearest(firstSnap.p);
   const result = engine.recommendFromPoints(place.p, destination.p);
 
-  assert.notEqual(firstSnap.edgeId, repeatedSnap.edgeId);
+  assert.equal(firstSnap.edgeId, repeatedSnap.edgeId);
   assert.deepEqual(firstSnap.p, repeatedSnap.p);
   assert.equal(result.snaps.start.edgeId, firstSnap.edgeId);
   assert.deepEqual(result.snaps.start.p, firstSnap.p);
 });
 
-test('snapshots on reciprocal copies of one road still use its direct segment', () => {
+test('reciprocal edge records collapse while distinct parallel geometries remain', () => {
+  assert.equal(engine.graphStats.duplicateReverseRecords, 2081);
+  assert.equal(engine.activeEdges.length, 2079);
+  const records = data.edges.filter(edge => edge.a === 427 && edge.b === 428 || edge.a === 428 && edge.b === 427);
+  const active = engine.activeEdges.filter(edge => edge.a === 427 && edge.b === 428 || edge.a === 428 && edge.b === 427);
+  assert.equal(records.length, 4);
+  assert.equal(active.length, 2);
+  assert.equal(new Set(active.map(edge => edge.geometry.map(p => p.join(',')).join(';'))).size, 2);
+  assert.deepEqual(active.map(edge => edge.distance).sort((a, b) => a - b), [82.86, 110.15]);
+});
+
+test('two snaps on one road use the same physical segment directly', () => {
   const start = data.places.find(value => value.name === '암사역 2번 출구');
   const end = data.places.find(value => value.name === '기와정 쭈꾸미 불고기');
   const startSnap = engine.nearest(start.p);
   const endSnap = engine.nearest(end.p);
   const result = engine.recommendFromSnaps(startSnap, endSnap);
 
-  assert.notEqual(startSnap.edgeId, endSnap.edgeId);
+  assert.equal(startSnap.edgeId, endSnap.edgeId);
   assert.equal(result.shortest.edgeIds.length, 1);
   assert.ok(result.shortest.distance < 60);
   assert.ok(meters(result.shortest.geometry[0], startSnap.p) < 1e-7);
