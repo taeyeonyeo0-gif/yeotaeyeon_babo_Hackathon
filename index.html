@@ -9,6 +9,7 @@
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%230d171b'/%3E%3Cpath d='M9 24V17Q9 10 16 10H23M18 5L23 10L18 15' fill='none' stroke='%23c2ef8a' stroke-width='3'/%3E%3C/svg%3E">
   <link rel="stylesheet" href="vendor/leaflet.css">
   <link rel="stylesheet" href="style.css">
+  <style>.legend-network{display:inline-block;width:16px;height:0;border-top:2px solid #85918a;opacity:.85}</style>
 </head>
 <body>
   <header class="topbar">
@@ -71,12 +72,13 @@
         <div class="map-legend" aria-label="지도 표시 항목">
           <span class="legend-item"><i class="legend-route"></i>선택 경로</span>
           <span class="legend-item"><i class="legend-shortest"></i>최단 경로</span>
+          <span class="legend-item"><i class="legend-network"></i>공개 보행 링크</span>
           <span class="legend-divider"></span>
           <label class="legend-toggle"><input id="show-lamps" type="checkbox"><i class="legend-lamp"></i>보안등</label>
           <label class="legend-toggle"><input id="show-cctv" type="checkbox" checked><i class="legend-camera"></i>CCTV·안심벨</label>
         </div>
         <div id="map" aria-label="천호동 보행망과 안전시설 지도"></div>
-        <div class="map-caption"><span class="map-caption-icon" aria-hidden="true">⌖</span><span id="map-hint">장소를 검색하거나 출발·도착 선택 버튼을 누른 뒤 지도를 눌러 주세요.</span></div>
+        <div class="map-caption"><span class="map-caption-icon" aria-hidden="true">⌖</span><span id="map-hint">회색 선은 경로 계산에 쓰는 공개 보행 링크예요. 지도 타일에 보이지 않는 골목·통로가 포함될 수 있어 현장 확인이 필요합니다.</span></div>
       </section>
     </section>
 
