@@ -8,6 +8,14 @@ const exclusions = JSON.parse(readFileSync(new URL('../data/graph-exclusions.jso
 const excludedSourceIds = new Set(exclusions.ways.flatMap(way => way.sourceIds));
 for (const edge of data.edges) edge.graphExcluded = excludedSourceIds.has(edge.sourceId);
 const engine = makeEngine(data);
+const assertSegmentsOnGraph = points => {
+  for (let i = 1; i < points.length; i++) {
+    const a = points[i - 1];
+    const b = points[i];
+    const midpoint = [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
+    assert.ok(engine.nearest(midpoint).distance < 0.05, `route segment ${i - 1} is off the active walk graph`);
+  }
+};
 
 test('nearest chooses the nearer endpoint over the complete multi-segment edge', () => {
   const edge = data.edges.find(value => value.sourceId === '414683226_2280430218_0');
@@ -47,6 +55,7 @@ test('A-to-B and B-to-A routes follow the same active graph in reverse', () => {
   for (const [route, from, to] of [[ab.shortest, startSnap.p, endSnap.p], [ba.shortest, endSnap.p, startSnap.p]]) {
     assert.ok(meters(route.geometry[0], from) < 1e-7);
     assert.ok(meters(route.geometry.at(-1), to) < 1e-7);
+    assertSegmentsOnGraph(route.geometry);
     assert.equal(route.edgeIds.some(id => data.edges[id].graphExcluded), false);
     for (let i = 0; i < route.edgeIds.length; i++) {
       const edge = data.edges[route.edgeIds[i]];
@@ -93,6 +102,7 @@ test('two snaps on one road use the same physical segment directly', () => {
   assert.ok(result.shortest.distance < 60);
   assert.ok(meters(result.shortest.geometry[0], startSnap.p) < 1e-7);
   assert.ok(meters(result.shortest.geometry.at(-1), endSnap.p) < 1e-7);
+  assertSegmentsOnGraph(result.shortest.geometry);
 });
 
 test('a trunk-link pair excluded from the walk graph is not routable', () => {
