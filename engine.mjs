@@ -40,9 +40,12 @@ export function makeEngine(data){
   const candidates=[...pool.values()].filter(r=>r.distance<=cap+1e-6),score=r=>r.distance*(1+weights.reduce((s,w,i)=>s+w*(1-r.quality[i]),0));candidates.sort((a,b)=>score(a)-score(b)||a.distance-b.distance);
    return{shortest,recommended:best,candidates,generated:pool.size,extra,speed,weights:[...weights],start,end,method:'resource-constrained-a-star',optimalForModel:true};
   }
-   function recommendFromPoints(startPoint,endPoint,weights=defaults,extra=5,speed=80){
-    const startSnap=nearest(startPoint),endSnap=nearest(endPoint),starts=startSnap.nodes||[startSnap.node],ends=endSnap.nodes||[endSnap.node],runs=[];
-    if(!startSnap.p||!endSnap.p||startSnap.edgeId===null||endSnap.edgeId===null)throw Error('공개 보행망에 연결된 위치를 선택해 주세요.');
+    function recommendFromPoints(startPoint,endPoint,weights=defaults,extra=5,speed=80){return recommendFromSnaps(nearest(startPoint),nearest(endPoint),weights,extra,speed);}
+    function edgeOrientation(a,b){if(a.geometry.length!==b.geometry.length)return 0;let same=true,reverse=true;for(let i=0;i<a.geometry.length;i++){const p=a.geometry[i],q=b.geometry[i],r=b.geometry[b.geometry.length-1-i];if(p[0]!==q[0]||p[1]!==q[1])same=false;if(p[0]!==r[0]||p[1]!==r[1])reverse=false;}return same?1:reverse?-1:0;}
+    function orientSnap(snap,edge){const source=data.edges[snap.edgeId],orientation=edgeOrientation(edge,source);if(!orientation)throw Error('같은 도로 간선의 스냅 정보를 연결하지 못했어요.');if(orientation===1)return{...snap,edgeId:edge.id,node:snap.offsetAlong<=pathLength(edge.geometry)/2?edge.a:edge.b,nodes:[edge.a,edge.b]};const total=pathLength(edge.geometry),offsetAlong=total-snap.offsetAlong;return{...snap,edgeId:edge.id,segment:source.geometry.length-2-snap.segment,t:1-snap.t,offsetAlong,node:offsetAlong<=total/2?edge.a:edge.b,nodes:[edge.a,edge.b]};}
+    function validateSnap(snap){const edge=data.edges[snap?.edgeId],total=edge?pathLength(edge.geometry):0;if(!edge||!edges.some(candidate=>candidate.id===edge.id)||!Array.isArray(snap.p)||snap.p.length!==2||!snap.p.every(Number.isFinite)||!Array.isArray(snap.nodes)||snap.nodes[0]!==edge.a||snap.nodes[1]!==edge.b||!Number.isInteger(snap.segment)||snap.segment<0||snap.segment>=edge.geometry.length-1||!Number.isFinite(snap.t)||snap.t<0||snap.t>1||!Number.isFinite(snap.offsetAlong)||snap.offsetAlong<0||snap.offsetAlong>total+1e-5||snap.node!==(snap.offsetAlong<=total/2?edge.a:edge.b))throw Error('도로 스냅 정보가 현재 보행망과 일치하지 않아요. 위치를 다시 선택해 주세요.');}
+    function recommendFromSnaps(startSnap,endSnap,weights=defaults,extra=5,speed=80){
+     validateSnap(startSnap);validateSnap(endSnap);const starts=startSnap.nodes,ends=endSnap.nodes,runs=[];
     const attach=(route,startNode,endNode)=>{
      const startAccess=snapToNode(startSnap,startNode),endAccess=snapToNode(endSnap,endNode).reverse(),middle=geometry(route);
      const routeGeometry=compact([...startAccess,...middle.slice(1),...endAccess.slice(1)]);
@@ -53,14 +56,15 @@ export function makeEngine(data){
     if(!runs.length)throw Error('공개 보행망에서 연결된 경로를 찾지 못했어요.');
     const score=route=>route.distance*(1+weights.reduce((sum,w,i)=>sum+w*(1-route.quality[i]),0));
     const direct=[];
-    if(startSnap.edgeId===endSnap.edgeId){
-     const edge=data.edges[startSnap.edgeId],geometry=pathBetweenSnaps(edge,startSnap,endSnap),distance=pathLength(geometry);
-     direct.push({edgeIds:[edge.id],nodes:[edge.a,edge.b],geometry,distance,quality:[edge.quality[0],edge.quality[1]],crossings:edge.crossing?1:0,startNode:startSnap.node,endNode:endSnap.node,accessStart:0,accessEnd:0});
+    const startEdge=data.edges[startSnap.edgeId],endEdge=data.edges[endSnap.edgeId];
+    if(startSnap.edgeId===endSnap.edgeId||edgeOrientation(startEdge,endEdge)){
+     const edge=startEdge,endOnEdge=orientSnap(endSnap,edge),geometry=pathBetweenSnaps(edge,startSnap,endOnEdge),distance=pathLength(geometry);
+     direct.push({edgeIds:[edge.id],nodes:[edge.a,edge.b],geometry,distance,quality:[edge.quality[0],edge.quality[1]],crossings:edge.crossing?1:0,startNode:startSnap.node,endNode:endOnEdge.node,accessStart:0,accessEnd:0});
     }
     const scoreWithDirect=route=>route.distance*(1+weights.reduce((sum,w,i)=>sum+w*(1-route.quality[i]),0)),shortest=[...runs.map(run=>run.shortest),...direct].sort((a,b)=>a.distance-b.distance)[0],recommended=[...runs.map(run=>run.recommended),...direct].sort((a,b)=>scoreWithDirect(a)-scoreWithDirect(b)||a.distance-b.distance)[0],pool=new Map();
     runs.forEach(run=>run.candidates.forEach(route=>pool.set(route.edgeIds.join(',')+`/${route.startNode}/${route.endNode}`,route)));
     direct.forEach(route=>pool.set(`direct/${route.edgeIds[0]}/${route.distance}`,route));
-    return{shortest,recommended,candidates:[...pool.values()].sort((a,b)=>scoreWithDirect(a)-scoreWithDirect(b)||a.distance-b.distance),generated:[...pool.values()].length,extra,speed,weights:[...weights],start:shortest.startNode,end:shortest.endNode,method:'resource-constrained-a-star-with-segment-snap',optimalForModel:true};
+    return{shortest,recommended,candidates:[...pool.values()].sort((a,b)=>scoreWithDirect(a)-scoreWithDirect(b)||a.distance-b.distance),generated:[...pool.values()].length,extra,speed,weights:[...weights],start:shortest.startNode,end:shortest.endNode,snaps:{start:startSnap,end:endSnap},method:'resource-constrained-a-star-with-segment-snap',optimalForModel:true};
    }
   function nearest(p){
    let best={node:-1,distance:Infinity,p:null,edgeId:null,segment:0,t:0,offsetAlong:0};
@@ -92,7 +96,7 @@ export function makeEngine(data){
     return forward?path:path.reverse();
    }
    function geometry(r){if(r.geometry)return r.geometry;const points=[];r.edgeIds.forEach((eid,i)=>{const e=data.edges[eid],part=e.a===r.nodes[i]?e.geometry:[...e.geometry].reverse();points.push(...(i?part.slice(1):part));});return points;}
-   return{route,recommend,recommendFromPoints,constrained,summarize,nearest,geometry,activeEdges:edges,graphStats};
+   return{route,recommend,recommendFromPoints,recommendFromSnaps,constrained,summarize,nearest,geometry,activeEdges:edges,graphStats};
 }
 export const features=r=>[r.distance/1000,...r.quality.map(q=>r.distance/1000*(1-q))];
 const sigmoid=x=>1/(1+Math.exp(-Math.max(-30,Math.min(30,x))));

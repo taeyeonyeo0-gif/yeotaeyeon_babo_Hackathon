@@ -35,9 +35,13 @@ test('A-to-B and B-to-A routes follow the same active graph in reverse', () => {
   const end = data.places.find(place => place.name === '강동경찰서 천호지구대');
   const startSnap = engine.nearest(start.p);
   const endSnap = engine.nearest(end.p);
-  const ab = engine.recommendFromPoints(startSnap.p, endSnap.p);
-  const ba = engine.recommendFromPoints(endSnap.p, startSnap.p);
+  const ab = engine.recommendFromSnaps(startSnap, endSnap);
+  const ba = engine.recommendFromSnaps(endSnap, startSnap);
 
+  assert.equal(ab.snaps.start.edgeId, startSnap.edgeId);
+  assert.equal(ab.snaps.end.edgeId, endSnap.edgeId);
+  assert.equal(ba.snaps.start.edgeId, endSnap.edgeId);
+  assert.equal(ba.snaps.end.edgeId, startSnap.edgeId);
   assert.deepEqual(ab.shortest.edgeIds, ba.shortest.edgeIds.slice().reverse());
   assert.equal(Math.abs(ab.shortest.distance - ba.shortest.distance) < 1e-6, true);
   for (const [route, from, to] of [[ab.shortest, startSnap.p, endSnap.p], [ba.shortest, endSnap.p, startSnap.p]]) {
@@ -51,6 +55,33 @@ test('A-to-B and B-to-A routes follow the same active graph in reverse', () => {
       assert.ok((edge.a === fromNode && edge.b === toNode) || (edge.a === toNode && edge.b === fromNode));
     }
   }
+});
+
+test('a repeated projection cannot replace the original snap edge', () => {
+  const place = data.places.find(value => value.name === '강동역 1번 출구');
+  const destination = data.places.find(value => value.name === '강동경찰서 천호지구대');
+  const firstSnap = engine.nearest(place.p);
+  const repeatedSnap = engine.nearest(firstSnap.p);
+  const result = engine.recommendFromPoints(place.p, destination.p);
+
+  assert.notEqual(firstSnap.edgeId, repeatedSnap.edgeId);
+  assert.deepEqual(firstSnap.p, repeatedSnap.p);
+  assert.equal(result.snaps.start.edgeId, firstSnap.edgeId);
+  assert.deepEqual(result.snaps.start.p, firstSnap.p);
+});
+
+test('snapshots on reciprocal copies of one road still use its direct segment', () => {
+  const start = data.places.find(value => value.name === '암사역 2번 출구');
+  const end = data.places.find(value => value.name === '기와정 쭈꾸미 불고기');
+  const startSnap = engine.nearest(start.p);
+  const endSnap = engine.nearest(end.p);
+  const result = engine.recommendFromSnaps(startSnap, endSnap);
+
+  assert.notEqual(startSnap.edgeId, endSnap.edgeId);
+  assert.equal(result.shortest.edgeIds.length, 1);
+  assert.ok(result.shortest.distance < 60);
+  assert.ok(meters(result.shortest.geometry[0], startSnap.p) < 1e-7);
+  assert.ok(meters(result.shortest.geometry.at(-1), endSnap.p) < 1e-7);
 });
 
 test('a trunk-link pair excluded from the walk graph is not routable', () => {
