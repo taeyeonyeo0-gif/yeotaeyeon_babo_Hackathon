@@ -5,10 +5,15 @@ export const xy=p=>[(p[0]-127.13)*111195*Math.cos(37.54*Math.PI/180),(p[1]-37.54
 export const meters=(a,b)=>{const x=xy(a),y=xy(b);return Math.hypot(x[0]-y[0],x[1]-y[1]);};
 class Heap{constructor(){this.a=[];}compare(a,b){return a.f-b.f||a.cost-b.cost||a.n-b.n;}push(v){const a=this.a;let i=a.length;a.push(v);while(i){const p=(i-1)>>1;if(this.compare(a[p],v)<=0)break;a[i]=a[p];i=p;}a[i]=v;}pop(){const a=this.a,t=a[0],v=a.pop();if(a.length){let i=0;while(i*2+1<a.length){let c=i*2+1;if(c+1<a.length&&this.compare(a[c+1],a[c])<0)c++;if(this.compare(v,a[c])<=0)break;a[i]=a[c];i=c;}a[i]=v;}return t;}get length(){return this.a.length;}}
 export function makeEngine(data){
- const adj=data.nodes.map(()=>[]);data.edges.forEach(e=>{adj[e.a].push([e.b,e]);adj[e.b].push([e.a,e]);});
+ const candidates=data.edges.filter(e=>!e.graphExcluded),componentAdj=data.nodes.map(()=>[]);candidates.forEach(e=>{componentAdj[e.a].push(e.b);componentAdj[e.b].push(e.a);});
+ const componentIds=new Int32Array(data.nodes.length).fill(-1),componentSizes=[];
+ for(let i=0;i<data.nodes.length;i++)if(componentIds[i]===-1){const id=componentSizes.length,queue=[i];componentIds[i]=id;let size=0;for(let j=0;j<queue.length;j++){const n=queue[j];size++;for(const next of componentAdj[n])if(componentIds[next]===-1){componentIds[next]=id;queue.push(next);}}componentSizes.push(size);}
+ const largestComponent=componentSizes.reduce((best,size,i)=>size>componentSizes[best]?i:best,0),activeNodes=Uint8Array.from(componentIds,id=>id===largestComponent?1:0),edges=candidates.filter(e=>activeNodes[e.a]&&activeNodes[e.b]),adj=data.nodes.map(()=>[]);
+ edges.forEach(e=>{adj[e.a].push([e.b,e]);adj[e.b].push([e.a,e]);});
+ const graphStats={componentCount:componentSizes.length,activeNodeCount:componentSizes[largestComponent]||0,disconnectedNodeCount:data.nodes.length-(componentSizes[largestComponent]||0),activeEdgeCount:edges.length,sourceEdgeCount:data.edges.length,accessExcludedEdgeCount:data.edges.length-candidates.length,filteredEdgeCount:data.edges.length-edges.length};
  function route(start,end,weights=[0,0,0],penalize=null,strength=0,useH=true){
-  if(!data.nodes[start]||!data.nodes[end])throw Error('지도 안의 보행 지점을 선택해 주세요.');
-  const alpha=Math.min(1,...data.edges.map(e=>e.distance/Math.max(1e-9,meters(data.nodes[e.a].p,data.nodes[e.b].p))))*.999999;
+   if(!data.nodes[start]||!data.nodes[end]||!activeNodes[start]||!activeNodes[end])throw Error('지도 안의 연결된 보행 지점을 선택해 주세요.');
+   const alpha=Math.min(1,...edges.map(e=>e.distance/Math.max(1e-9,meters(data.nodes[e.a].p,data.nodes[e.b].p))))*.999999;
   const h=n=>useH?alpha*meters(data.nodes[n].p,data.nodes[end].p):0;
   const open=new Heap(),best=new Float64Array(data.nodes.length).fill(Infinity),prev=new Array(data.nodes.length);best[start]=0;open.push({n:start,cost:0,f:h(start)});let expanded=0;
    while(open.length){const cur=open.pop();if(cur.cost>best[cur.n]+1e-8)continue;expanded++;
@@ -65,7 +70,7 @@ export function makeEngine(data){
     const qx=aa[0]+t*dx,qy=aa[1]+t*dy,lon=127.13+qx/(111195*Math.cos(37.54*Math.PI/180)),lat=37.54+qy/111195;
     return{distance:Math.hypot(pp[0]-qx,pp[1]-qy),p:[lon,lat],t};
    };
-   for(const edge of data.edges){let along=0;for(let i=1;i<edge.geometry.length;i++){
+    for(const edge of edges){let along=0;for(let i=1;i<edge.geometry.length;i++){
     const hit=project(p,edge.geometry[i-1],edge.geometry[i]);
     if(hit.distance<best.distance){const node=hit.t<.5?edge.a:edge.b;best={node,nodes:[edge.a,edge.b],distance:hit.distance,p:hit.p,edgeId:edge.id,segment:i-1,t:hit.t,offsetAlong:along+meters(edge.geometry[i-1],hit.p)};}
     along+=meters(edge.geometry[i-1],edge.geometry[i]);
@@ -86,7 +91,7 @@ export function makeEngine(data){
     return forward?path:path.reverse();
    }
    function geometry(r){if(r.geometry)return r.geometry;const points=[];r.edgeIds.forEach((eid,i)=>{const e=data.edges[eid],part=e.a===r.nodes[i]?e.geometry:[...e.geometry].reverse();points.push(...(i?part.slice(1):part));});return points;}
-  return{route,recommend,recommendFromPoints,constrained,summarize,nearest,geometry};
+   return{route,recommend,recommendFromPoints,constrained,summarize,nearest,geometry,activeEdges:edges,graphStats};
 }
 export const features=r=>[r.distance/1000,...r.quality.map(q=>r.distance/1000*(1-q))];
 const sigmoid=x=>1/(1+Math.exp(-Math.max(-30,Math.min(30,x))));
