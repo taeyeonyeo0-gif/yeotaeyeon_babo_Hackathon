@@ -70,10 +70,11 @@ export function makeEngine(data){
     const qx=aa[0]+t*dx,qy=aa[1]+t*dy,lon=127.13+qx/(111195*Math.cos(37.54*Math.PI/180)),lat=37.54+qy/111195;
     return{distance:Math.hypot(pp[0]-qx,pp[1]-qy),p:[lon,lat],t};
    };
-    for(const edge of edges){let along=0;for(let i=1;i<edge.geometry.length;i++){
-    const hit=project(p,edge.geometry[i-1],edge.geometry[i]);
-    if(hit.distance<best.distance){const node=hit.t<.5?edge.a:edge.b;best={node,nodes:[edge.a,edge.b],distance:hit.distance,p:hit.p,edgeId:edge.id,segment:i-1,t:hit.t,offsetAlong:along+meters(edge.geometry[i-1],hit.p)};}
-    along+=meters(edge.geometry[i-1],edge.geometry[i]);
+    for(const edge of edges){let along=0;const total=pathLength(edge.geometry);for(let i=1;i<edge.geometry.length;i++){
+     const hit=project(p,edge.geometry[i-1],edge.geometry[i]);
+     const offsetAlong=along+meters(edge.geometry[i-1],hit.p);
+     if(hit.distance<best.distance){const node=offsetAlong<=total/2?edge.a:edge.b;best={node,nodes:[edge.a,edge.b],distance:hit.distance,p:hit.p,edgeId:edge.id,segment:i-1,t:hit.t,offsetAlong};}
+     along+=meters(edge.geometry[i-1],edge.geometry[i]);
    }}
    return best;
   }
