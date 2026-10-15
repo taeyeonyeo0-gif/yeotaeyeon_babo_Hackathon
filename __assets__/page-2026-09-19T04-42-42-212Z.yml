@@ -1,0 +1,165 @@
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - link "↗ 밤길 천호 생활권" [ref=e3] [cursor=pointer]:
+      - /url: ./
+      - generic [ref=e4]: ↗
+      - text: 밤길
+      - generic [ref=e5]: 천호 생활권
+    - link "실제 공공데이터" [ref=e6] [cursor=pointer]:
+      - /url: "#data-details"
+  - main [ref=e7]:
+    - generic [ref=e8]:
+      - generic [ref=e9]:
+        - paragraph [ref=e10]: NIGHTPATH / WALK HOME
+        - heading "내가 걷는 길, 근거를 보고 고르세요." [level=1] [ref=e11]
+        - paragraph [ref=e12]: 천호역 주변의 실제 길과 보안등·CCTV 위치를 비교합니다.
+      - generic [ref=e13]:
+        - text: 공개자료 기반 시험 운영
+        - text: 시설 작동·도로 폐쇄는 실시간 확인되지 않습니다.
+    - status [ref=e14]: 4개 중복 없는 후보 중 4개가 추가 시간 조건을 만족합니다. 시간은 보행망 접점 사이의 추정치이며 신호 대기는 제외됩니다.
+    - generic [ref=e15]:
+      - complementary [ref=e16]:
+        - heading "어디로 갈까요?" [level=2] [ref=e17]
+        - generic [ref=e18]: 출발 장소 · 도로명
+        - combobox "출발 장소 · 도로명" [ref=e19]: 천호역 2번 출구
+        - generic [ref=e20]:
+          - button "지도에서 출발 선택" [ref=e21] [cursor=pointer]
+          - button "내 위치" [ref=e22] [cursor=pointer]
+        - generic [ref=e23]: 도착 장소 · 도로명
+        - combobox "도착 장소 · 도로명" [ref=e24]: 강동경찰서 천호지구대 · 구천면로 141
+        - button "지도에서 도착 선택" [ref=e25] [cursor=pointer]
+        - paragraph [ref=e66]: 출발 장소에서 공개 보행망 접점까지 21m · 도착 장소에서 공개 보행망 접점까지 17m · 접점 사이만 안내
+        - button "경로 비교하기" [ref=e26] [cursor=pointer]
+        - generic [ref=e27]:
+          - generic [ref=e28]: 추가로 걸을 수 있는 시간
+          - generic [ref=e29]: 5분
+        - slider "추가로 걸을 수 있는 시간" [ref=e30] [cursor=pointer]: "5"
+        - generic [ref=e31]: 걷는 속도
+        - combobox "걷는 속도" [ref=e32]:
+          - option "천천히 · 60m/분"
+          - option "보통 · 80m/분" [selected]
+          - option "빠르게 · 100m/분"
+        - group [ref=e33]:
+          - generic "추천 기준 조정" [ref=e34] [cursor=pointer]
+      - generic [ref=e35]:
+        - generic [ref=e36]:
+          - heading "실제 보행 경로" [level=2] [ref=e37]
+          - generic [ref=e67]: 실제 보행 링크 4,196개
+        - generic [ref=e38]:
+          - generic [ref=e39]: 선택한 경로
+          - generic [ref=e41]: 보행망 최단
+          - generic [ref=e43]:
+            - checkbox "보안등" [ref=e44]
+            - text: 보안등
+          - generic [ref=e45]:
+            - checkbox "CCTV·안심벨" [checked] [ref=e46]
+            - text: CCTV·안심벨
+        - generic "실제 보행망 지도" [ref=e47]:
+          - img [ref=e70]
+          - generic [ref=e4197]:
+            - generic [ref=e4200]: 50m
+            - link "Kakao 맵으로 이동(새창열림)" [ref=e4202] [cursor=pointer]:
+              - /url: http://map.kakao.com/
+              - img "Kakao 맵으로 이동(새창열림)" [ref=e4203]
+        - generic [ref=e48]:
+          - generic [ref=e49]: 장소를 검색하거나 출발·도착 선택 버튼을 누른 뒤 지도를 눌러 주세요.
+          - button "경로 전체 보기" [ref=e50] [cursor=pointer]
+    - generic [ref=e4204]:
+      - button "보행망 최단 거리 우선 7.3 분 · 0.59km 보안등 근접 49% 등록 CCTV 근접 0% 차량 통행 없는 길 0% 보안등 30m·CCTV 50m 내 구간 비율. 안전 확률이나 실제 밝기를 뜻하지 않습니다." [ref=e4205] [cursor=pointer]:
+        - generic [ref=e4206]:
+          - heading "보행망 최단" [level=2] [ref=e4207]
+          - generic [ref=e4208]: 거리 우선
+        - generic [ref=e4209]: 7.3 분 · 0.59km
+        - generic [ref=e4210]:
+          - generic [ref=e4211]:
+            - text: 보안등 근접
+            - generic [ref=e4212]: 49%
+          - generic [ref=e4215]:
+            - text: 등록 CCTV 근접
+            - generic [ref=e4216]: 0%
+          - generic [ref=e4218]:
+            - text: 차량 통행 없는 길
+            - generic [ref=e4219]: 0%
+        - paragraph [ref=e4221]: 보안등 30m·CCTV 50m 내 구간 비율. 안전 확률이나 실제 밝기를 뜻하지 않습니다.
+      - button "시설 우선 추천 +0.2분 7.6 분 · 0.61km 보안등 근접 92% 등록 CCTV 근접 51% 차량 통행 없는 길 0% 보안등 30m·CCTV 50m 내 구간 비율. 안전 확률이나 실제 밝기를 뜻하지 않습니다." [pressed] [ref=e4222] [cursor=pointer]:
+        - generic [ref=e4223]:
+          - heading "시설 우선 추천" [level=2] [ref=e4224]
+          - generic [ref=e4225]: +0.2분
+        - generic [ref=e4226]: 7.6 분 · 0.61km
+        - generic [ref=e4227]:
+          - generic [ref=e4228]:
+            - text: 보안등 근접
+            - generic [ref=e4229]: 92%
+          - generic [ref=e4232]:
+            - text: 등록 CCTV 근접
+            - generic [ref=e4233]: 51%
+          - generic [ref=e4236]:
+            - text: 차량 통행 없는 길
+            - generic [ref=e4237]: 0%
+        - paragraph [ref=e4239]: 보안등 30m·CCTV 50m 내 구간 비율. 안전 확률이나 실제 밝기를 뜻하지 않습니다.
+      - button "다른 후보 +0.2분 7.6 분 · 0.61km 보안등 근접 92% 등록 CCTV 근접 51% 차량 통행 없는 길 0% 보안등 30m·CCTV 50m 내 구간 비율. 안전 확률이나 실제 밝기를 뜻하지 않습니다." [ref=e4240] [cursor=pointer]:
+        - generic [ref=e4241]:
+          - heading "다른 후보" [level=2] [ref=e4242]
+          - generic [ref=e4243]: +0.2분
+        - generic [ref=e4244]: 7.6 분 · 0.61km
+        - generic [ref=e4245]:
+          - generic [ref=e4246]:
+            - text: 보안등 근접
+            - generic [ref=e4247]: 92%
+          - generic [ref=e4250]:
+            - text: 등록 CCTV 근접
+            - generic [ref=e4251]: 51%
+          - generic [ref=e4254]:
+            - text: 차량 통행 없는 길
+            - generic [ref=e4255]: 0%
+        - paragraph [ref=e4257]: 보안등 30m·CCTV 50m 내 구간 비율. 안전 확률이나 실제 밝기를 뜻하지 않습니다.
+    - paragraph [ref=e4258]: 최단 대비 0.2분 추가 · 보안등 근접 구간 43%p 변화 · 등록 CCTV 근접 구간 51%p 변화
+    - generic [ref=e4259]:
+      - generic [ref=e4260]:
+        - heading "시설 우선 추천" [level=2] [ref=e4261]
+        - paragraph [ref=e4262]: 7.6분 · 607m · 횡단보도 링크 0개
+      - generic [ref=e4263]:
+        - button "현재 위치로 따라가기" [ref=e4264] [cursor=pointer]
+        - button "GPX 받기" [ref=e4265] [cursor=pointer]
+      - paragraph [ref=e4266]: 위치 추적은 버튼을 눌렀을 때만 시작하며, 위치 기록을 서버에 저장하지 않습니다.
+      - group [ref=e4267]:
+        - generic "경로의 주요 구간 보기" [ref=e4268]
+    - generic [ref=e51]:
+      - generic [ref=e52]:
+        - paragraph [ref=e53]: LEARN YOUR PREFERENCE
+        - heading "실제 두 길 중 어느 쪽이 좋나요?" [level=2] [ref=e54]
+        - paragraph [ref=e55]: 현재 출발·도착의 실제 후보를 선택하면 선호를 학습합니다. 다른 출발·도착으로 4번 이상 선택해 주세요.
+        - paragraph [ref=e56]: 선택 0개
+        - button "학습하고 추천에 적용" [disabled] [ref=e57]
+        - button "선택 기록 초기화" [ref=e58] [cursor=pointer]
+        - paragraph [ref=e59]: 학습 기록은 현재 탭에만 남고 새로고침하면 사라집니다. 같은 출발·도착은 한 번으로 계산합니다.
+      - generic [ref=e60]:
+        - generic [ref=e4269]:
+          - article [ref=e4270]:
+            - heading "A · 보행망 최단" [level=3] [ref=e4271]
+            - generic [ref=e4272]: 7.3 분
+            - generic [ref=e4273]:
+              - term [ref=e4274]: 보안등 근접
+              - definition [ref=e4275]: 49%
+              - term [ref=e4276]: 등록 CCTV 근접
+              - definition [ref=e4277]: 0%
+              - term [ref=e4278]: 차량 통행 없는 길
+              - definition [ref=e4279]: 0%
+            - button "이 길이 좋아요" [ref=e4280] [cursor=pointer]
+          - article [ref=e4281]:
+            - heading "B · 다른 후보" [level=3] [ref=e4282]
+            - generic [ref=e4283]: 7.6 분
+            - generic [ref=e4284]:
+              - term [ref=e4285]: 보안등 근접
+              - definition [ref=e4286]: 92%
+              - term [ref=e4287]: 등록 CCTV 근접
+              - definition [ref=e4288]: 51%
+              - term [ref=e4289]: 차량 통행 없는 길
+              - definition [ref=e4290]: 0%
+            - button "이 길이 좋아요" [ref=e4291] [cursor=pointer]
+        - paragraph [ref=e61]: 실제 경로를 먼저 비교해 주세요.
+    - group [ref=e62]:
+      - generic "사용한 실제 데이터와 판단 과정" [ref=e63] [cursor=pointer]
+    - generic [ref=e64]:
+      - text: 밤길 · NIGHTPATH
+      - generic [ref=e65]: 실제 보행망 + 시설 위치 / 원자료 기준일을 확인하세요.

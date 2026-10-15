@@ -1,0 +1,126 @@
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - link "밤길 안심길 홈" [ref=e3] [cursor=pointer]:
+      - /url: "#top"
+      - img [ref=e5]
+      - generic [ref=e8]:
+        - text: 밤길 안심길
+        - generic [ref=e9]: SAFER WAY HOME
+    - generic [ref=e10]: 밝고 안전한 길을 먼저 생각합니다
+  - main [ref=e11]:
+    - generic [ref=e12]:
+      - generic [ref=e13]:
+        - generic [ref=e14]: Night route finder
+        - heading "오늘 밤, 안심하고 걸어요." [level=1] [ref=e15]:
+          - text: 오늘 밤,
+          - emphasis [ref=e16]: 안심하고
+          - text: 걸어요.
+        - paragraph [ref=e17]:
+          - text: 빠른 길보다 안전한 길이 필요한 순간.
+          - text: 주변이 밝고 도움을 받을 수 있는 경로를 비교해보세요.
+      - complementary [ref=e18]:
+        - strong [ref=e19]: 안심길은 이렇게 골라요
+        - paragraph [ref=e20]: 가로등, CCTV, 편의점처럼 늦은 시간에도 도움을 받을 수 있는 시설을 참고해 경로를 보여드립니다.
+    - region "안심 경로 찾기" [ref=e21]:
+      - generic [ref=e22]:
+        - generic [ref=e23]:
+          - generic [ref=e24]:
+            - heading "어디로 갈까요?" [level=2] [ref=e25]
+            - paragraph [ref=e26]: 출발지와 목적지를 입력해주세요.
+          - generic "서비스 정상" [ref=e27]
+        - generic [ref=e28]:
+          - generic [ref=e29]: 출발지
+          - generic [ref=e30]:
+            - img [ref=e31]
+            - combobox "출발지" [ref=e34]: 천호역
+        - generic [ref=e35]:
+          - generic [ref=e36]: 목적지
+          - generic [ref=e37]:
+            - img [ref=e38]
+            - combobox "목적지" [ref=e41]: 강동구청
+        - button "출발지와 목적지 바꾸기" [ref=e42] [cursor=pointer]:
+          - img [ref=e43]
+        - generic [ref=e45]: 경로 우선순위
+        - group "경로 우선순위" [ref=e46]:
+          - button "안전 우선" [ref=e47] [cursor=pointer]
+          - button "안전 + 빠름" [ref=e48] [cursor=pointer]
+        - button "안심 경로 찾기" [ref=e49] [cursor=pointer]:
+          - text: 안심 경로 찾기
+          - img [ref=e50]
+        - paragraph [ref=e52]:
+          - img [ref=e53]
+          - text: 입력한 장소는 저장하지 않으며, 이 화면의 데모 경로로만 보여드립니다.
+      - generic "강동구 실제 보행 네트워크 지도" [ref=e56]:
+        - generic:
+          - generic [ref=e57]: GANGDONG / LIVE DATA MAP
+          - generic [ref=e58]:
+            - generic [ref=e59]: 안심 경로
+            - generic [ref=e61]: 보행 네트워크
+        - img "강동구 보행 네트워크와 안전 시설 지도" [ref=e63]:
+          - generic:
+            - generic:
+              - button "출발지" [ref=e66] [cursor=pointer]:
+                - generic "출발지"
+              - button "목적지" [ref=e67] [cursor=pointer]:
+                - generic "목적지"
+          - generic:
+            - generic [ref=e70]:
+              - generic [ref=e72]:
+                - checkbox "보행 네트워크" [checked] [ref=e73]
+                - text: 보행 네트워크
+              - generic [ref=e75]:
+                - checkbox "가로등 위치" [checked] [ref=e76]
+                - text: 가로등 위치
+              - generic [ref=e78]:
+                - checkbox "서울 안심시설" [checked] [ref=e79]
+                - text: 서울 안심시설
+              - generic [ref=e81]:
+                - checkbox "OSM 시설" [checked] [ref=e82]
+                - text: OSM 시설
+              - generic [ref=e84]:
+                - checkbox "인접 보행망" [ref=e85]
+                - text: 인접 보행망
+            - generic:
+              - generic [ref=e86]:
+                - button "Zoom in" [ref=e87] [cursor=pointer]: +
+                - button "Zoom out" [ref=e88] [cursor=pointer]: −
+              - generic [ref=e89]:
+                - link "Leaflet" [ref=e90] [cursor=pointer]:
+                  - /url: https://leafletjs.com
+                  - img [ref=e91]
+                  - text: Leaflet
+                - text: "| © OpenStreetMap contributors"
+      - generic [ref=e95]:
+        - generic [ref=e96]:
+          - generic [ref=e97]:
+            - heading "추천 경로 1개" [level=2] [ref=e98]
+            - paragraph [ref=e99]: 강동구 보행 네트워크와 가로등 데이터를 반영한 결과입니다. 천호역 → 강동구청
+          - button "다른 경로 보기" [ref=e100] [cursor=pointer]:
+            - img [ref=e101]
+            - text: 다른 경로 보기
+        - article [ref=e104]:
+          - generic [ref=e105]: 가장 안심
+          - generic [ref=e106]:
+            - generic [ref=e107]:
+              - text: 경로 01
+              - strong [ref=e108]: 조명이 많은 길
+            - generic [ref=e109]:
+              - text: 15분
+              - generic [ref=e110]: 예상 소요
+          - generic [ref=e113]:
+            - generic [ref=e114]: ● 가로등 231개
+            - generic [ref=e115]: ▣ 주변 시설 29개
+          - paragraph [ref=e116]: 추천 이유 약 1,064m, 데이터상 조명 시설이 많은 보행길입니다.
+    - generic [ref=e117]:
+      - article [ref=e118]:
+        - img [ref=e120]
+        - generic [ref=e123]:
+          - heading "안전 정보는 참고용이에요" [level=3] [ref=e124]
+          - paragraph [ref=e125]: 현재 위치의 실제 상황과 다를 수 있어요. 늦은 밤에는 주변을 살피고, 필요하다면 가족이나 친구에게 이동 사실을 알려주세요.
+      - article [ref=e126]:
+        - heading "이런 기능을 준비하고 있어요" [level=3] [ref=e127]
+        - paragraph [ref=e128]: 실시간 조명 정보, 귀가 알림, 안심 귀가 동행 요청까지. 누구나 편안하게 집에 도착할 수 있도록 계속 개선합니다.
+  - contentinfo [ref=e129]:
+    - strong [ref=e130]: 밤길 안심길
+    - text: · 빠른 길보다, 안심할 수 있는 길
+  - status: 실제 데이터로 1개 경로를 계산했어요.

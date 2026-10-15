@@ -1,0 +1,171 @@
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - link "밤길 안심길 홈" [ref=e3] [cursor=pointer]:
+      - /url: "#top"
+      - img [ref=e5]
+      - generic [ref=e8]:
+        - text: 밤길 안심길
+        - generic [ref=e9]: SAFER WAY HOME
+    - generic [ref=e10]: 밝고 안전한 길을 먼저 생각합니다
+  - main [ref=e11]:
+    - generic [ref=e12]:
+      - generic [ref=e13]:
+        - generic [ref=e14]: Night route finder
+        - heading "오늘 밤, 안심하고 걸어요." [level=1] [ref=e15]:
+          - text: 오늘 밤,
+          - emphasis [ref=e16]: 안심하고
+          - text: 걸어요.
+        - paragraph [ref=e17]:
+          - text: 빠른 길보다 안전한 길이 필요한 순간.
+          - text: 주변이 밝고 도움을 받을 수 있는 경로를 비교해보세요.
+      - complementary [ref=e18]:
+        - strong [ref=e19]: 안심길은 이렇게 골라요
+        - paragraph [ref=e20]: 가로등, CCTV, 편의점처럼 늦은 시간에도 도움을 받을 수 있는 시설을 참고해 경로를 보여드립니다.
+    - region "안심 경로 찾기" [ref=e21]:
+      - generic [ref=e22]:
+        - generic [ref=e23]:
+          - generic [ref=e24]:
+            - heading "어디로 갈까요?" [level=2] [ref=e25]
+            - paragraph [ref=e26]: 출발지와 목적지를 입력해주세요.
+          - generic "서비스 정상" [ref=e27]
+        - generic [ref=e28]:
+          - generic [ref=e29]: 출발지
+          - generic [ref=e30]:
+            - img [ref=e31]
+            - combobox "출발지" [ref=e34]: 천호역
+        - generic [ref=e35]:
+          - generic [ref=e36]: 목적지
+          - generic [ref=e37]:
+            - img [ref=e38]
+            - combobox "목적지" [ref=e41]: 강동구청
+        - button "출발지와 목적지 바꾸기" [ref=e42] [cursor=pointer]:
+          - img [ref=e43]
+        - generic [ref=e45]: 경로 우선순위
+        - group "경로 우선순위" [ref=e46]:
+          - button "안전 우선" [ref=e47] [cursor=pointer]
+          - button "안전 + 빠름" [ref=e48] [cursor=pointer]
+        - generic [ref=e49]:
+          - generic [ref=e50]:
+            - generic [ref=e51]: 추가로 걸을 수 있는 시간
+            - generic [ref=e52]: 5분
+          - slider [ref=e53]: "5"
+          - combobox "걷는 속도" [ref=e54]:
+            - option "천천히 · 60m/분"
+            - option "보통 · 80m/분" [selected]
+            - option "빠르게 · 100m/분"
+          - group [ref=e55]:
+            - generic "추천 기준 조정" [ref=e56] [cursor=pointer]
+        - button "안심 경로 찾기" [ref=e57] [cursor=pointer]:
+          - text: 안심 경로 찾기
+          - img [ref=e58]
+        - paragraph [ref=e60]:
+          - img [ref=e61]
+          - text: 입력한 장소는 저장하지 않으며, 이 화면의 데모 경로로만 보여드립니다.
+      - generic "강동구 실제 보행 네트워크 지도" [ref=e64]:
+        - generic:
+          - generic [ref=e65]: GANGDONG / LIVE DATA MAP
+          - generic [ref=e66]:
+            - generic [ref=e67]: 안심 경로
+            - generic [ref=e69]: 보행 네트워크
+        - img "강동구 보행 네트워크와 안전 시설 지도" [ref=e71]:
+          - img [ref=e74]
+          - generic [ref=e75]:
+            - generic [ref=e78]: 250m
+            - link "Kakao 맵으로 이동(새창열림)" [ref=e80] [cursor=pointer]:
+              - /url: http://map.kakao.com/
+              - img "Kakao 맵으로 이동(새창열림)" [ref=e81]
+        - generic "지도 데이터 레이어" [ref=e82]:
+          - button "보행망" [ref=e83] [cursor=pointer]
+          - button "가로등" [ref=e84] [cursor=pointer]
+          - button "안심시설" [ref=e85] [cursor=pointer]
+          - button "OSM 시설" [ref=e86] [cursor=pointer]
+          - button "인접 보행망" [ref=e87] [cursor=pointer]
+        - generic [ref=e88]: 카카오맵 · 실제 데이터
+        - generic [ref=e89]: Kakao Map · OpenStreetMap 데이터 참고
+      - generic [ref=e90]:
+        - generic [ref=e91]:
+          - generic [ref=e92]:
+            - heading "추천 경로 0개" [level=2] [ref=e93]
+            - paragraph [ref=e94]: 실제 보행망에서 경로를 계산합니다.
+          - button "다른 경로 보기" [ref=e95] [cursor=pointer]:
+            - img [ref=e96]
+            - text: 다른 경로 보기
+        - generic [ref=e98]:
+          - article [ref=e99]:
+            - generic [ref=e100]: 가장 안심
+            - generic [ref=e101]:
+              - generic [ref=e102]:
+                - text: 경로 01
+                - strong [ref=e103]: 밝은 큰길
+              - generic [ref=e104]:
+                - text: 18분
+                - generic [ref=e105]: 예상 소요
+            - generic [ref=e108]:
+              - generic [ref=e109]:
+                - img [ref=e110]
+                - text: 가로등 많음
+              - generic [ref=e112]:
+                - img [ref=e113]
+                - text: CCTV 4개
+            - paragraph [ref=e116]: 추천 이유 큰길을 따라 걸어 늦은 시간에도 주변이 밝아요.
+          - article [ref=e117]:
+            - generic [ref=e118]:
+              - generic [ref=e119]:
+                - text: 경로 02
+                - strong [ref=e120]: 편의점 연결길
+              - generic [ref=e121]:
+                - text: 15분
+                - generic [ref=e122]: 예상 소요
+            - generic [ref=e125]:
+              - generic [ref=e126]:
+                - img [ref=e127]
+                - text: 편의점 2개
+              - generic [ref=e129]:
+                - img [ref=e130]
+                - text: 가로등 보통
+            - paragraph [ref=e132]: 추천 이유 중간에 잠깐 들를 수 있는 편의점이 있어요.
+          - article [ref=e133]:
+            - generic [ref=e134]:
+              - generic [ref=e135]:
+                - text: 경로 03
+                - strong [ref=e136]: 가장 빠른 길
+              - generic [ref=e137]:
+                - text: 11분
+                - generic [ref=e138]: 예상 소요
+            - generic [ref=e141]:
+              - generic [ref=e142]:
+                - img [ref=e143]
+                - text: 가로등 적음
+              - generic [ref=e145]:
+                - img [ref=e146]
+                - text: 지름길
+            - paragraph [ref=e148]: 참고 빠르지만 어두운 골목이 포함되어 있어요.
+      - paragraph [ref=e149]
+    - generic [ref=e150]:
+      - generic [ref=e151]:
+        - heading "선택한 경로" [level=3] [ref=e152]
+        - paragraph
+        - list
+      - generic [ref=e153]:
+        - button "GPX 저장" [ref=e154] [cursor=pointer]
+        - button "선택 해제" [ref=e155] [cursor=pointer]
+    - generic [ref=e156]:
+      - generic [ref=e157]:
+        - heading "나의 선호 기록" [level=3] [ref=e158]
+        - paragraph [ref=e159]: 추천 경로 카드를 눌러 마음에 드는 길을 기록해보세요. 기록은 현재 탭에만 남습니다.
+      - generic [ref=e160]:
+        - generic [ref=e161]: 선택 0개
+        - button "기록 초기화" [ref=e162] [cursor=pointer]
+    - generic [ref=e163]:
+      - article [ref=e164]:
+        - img [ref=e166]
+        - generic [ref=e169]:
+          - heading "안전 정보는 참고용이에요" [level=3] [ref=e170]
+          - paragraph [ref=e171]: 현재 위치의 실제 상황과 다를 수 있어요. 늦은 밤에는 주변을 살피고, 필요하다면 가족이나 친구에게 이동 사실을 알려주세요.
+      - article [ref=e172]:
+        - heading "이런 기능을 준비하고 있어요" [level=3] [ref=e173]
+        - paragraph [ref=e174]: 실시간 조명 정보, 귀가 알림, 안심 귀가 동행 요청까지. 누구나 편안하게 집에 도착할 수 있도록 계속 개선합니다.
+  - contentinfo [ref=e175]:
+    - strong [ref=e176]: 밤길 안심길
+    - text: · 빠른 길보다, 안심할 수 있는 길
+  - status

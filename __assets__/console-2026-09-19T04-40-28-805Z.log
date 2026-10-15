@@ -1,0 +1,7 @@
+[     125ms] [WARNING] A parser-blocking, cross site (i.e. different eTLD+1) script, https://t1.daumcdn.net/mapjsapi/js/main/4.5.26/kakao.js, is invoked via document.write. The network request for this script MAY be blocked by the browser in this or a future page load due to poor network connectivity. If blocked in this page load, it will be confirmed in a subsequent console message. See https://www.chromestatus.com/feature/5718547946799104 for more details. @ https://7w1pbk2fuc6sqzry.jitda.io/kakao-sdk.js:8
+[     126ms] [WARNING] A parser-blocking, cross site (i.e. different eTLD+1) script, https://t1.daumcdn.net/mapjsapi/js/main/4.5.26/kakao.js, is invoked via document.write. The network request for this script MAY be blocked by the browser in this or a future page load due to poor network connectivity. If blocked in this page load, it will be confirmed in a subsequent console message. See https://www.chromestatus.com/feature/5718547946799104 for more details. @ https://7w1pbk2fuc6sqzry.jitda.io/kakao-sdk.js:8
+[     997ms] [ERROR] TypeError: Cannot read properties of undefined (reading 'indexOf')
+    at Ja (https://t1.daumcdn.net/mapjsapi/js/main/4.5.26/kakao.js:2:314)
+    at c.B (https://t1.daumcdn.net/mapjsapi/js/main/4.5.26/kakao.js:124:398)
+    at object.addTo (https://7w1pbk2fuc6sqzry.jitda.io/kakao-bridge.mjs:29:448)
+    at init (https://7w1pbk2fuc6sqzry.jitda.io/app.mjs:61:435) @ https://7w1pbk2fuc6sqzry.jitda.io/app.mjs:79

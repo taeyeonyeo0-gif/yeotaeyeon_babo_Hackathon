@@ -1,0 +1,4 @@
+streamlit>=1.37
+folium>=0.17
+streamlit-folium>=0.22
+pandas>=2.0

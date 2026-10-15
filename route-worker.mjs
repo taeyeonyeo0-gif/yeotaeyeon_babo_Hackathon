@@ -1,0 +1,2 @@
+import{makeEngine}from'./engine.mjs?v=bigroad-off';let engine;
+onmessage=e=>{const{id,type,data,...params}=e.data;try{if(type==='init'){engine=makeEngine(data);postMessage({id,ready:true});}else{if(!engine)throw Error('지도를 불러오는 중이에요.');const result=params.startPoint?engine.recommendFromPoints(params.startPoint,params.endPoint,params.weights,params.extra,params.speed):engine.recommend(params.start,params.end,params.weights,params.extra,params.speed);postMessage({id,result});}}catch(error){postMessage({id,error:error.message});}};
