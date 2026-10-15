@@ -35,15 +35,28 @@ export function makeEngine(data){
   const candidates=[...pool.values()].filter(r=>r.distance<=cap+1e-6),score=r=>r.distance*(1+weights.reduce((s,w,i)=>s+w*(1-r.quality[i]),0));candidates.sort((a,b)=>score(a)-score(b)||a.distance-b.distance);
    return{shortest,recommended:best,candidates,generated:pool.size,extra,speed,weights:[...weights],start,end,method:'resource-constrained-a-star',optimalForModel:true};
   }
-  function recommendFromPoints(startPoint,endPoint,weights=defaults,extra=5,speed=80){
-   const startSnap=nearest(startPoint),endSnap=nearest(endPoint),starts=startSnap.nodes||[startSnap.node],ends=endSnap.nodes||[endSnap.node],runs=[];
-   const attach=(route,startNode,endNode)=>{const accessStart=meters(startSnap.p,data.nodes[startNode].p),accessEnd=meters(endSnap.p,data.nodes[endNode].p);return{...route,distance:route.distance+accessStart+accessEnd,startNode,endNode,accessStart,accessEnd};};
-   for(const start of starts)for(const end of ends){if(start===end)continue;const result=recommend(start,end,weights,extra,speed);runs.push({shortest:attach(result.shortest,start,end),recommended:attach(result.recommended,start,end),candidates:result.candidates.map(route=>attach(route,start,end)),generated:result.generated});}
-   if(!runs.length)throw Error('공개 보행망에서 연결된 경로를 찾지 못했어요.');
-   const score=route=>route.distance*(1+weights.reduce((sum,w,i)=>sum+w*(1-route.quality[i]),0));
-    const direct=[];if(startSnap.edgeId!==null&&startSnap.edgeId===endSnap.edgeId){const edge=data.edges[startSnap.edgeId],distance=Math.abs(startSnap.offsetAlong-endSnap.offset);direct.push({edgeIds:[edge.id],nodes:[edge.a,edge.b],geometry:[startSnap.p,endSnap.p],distance,quality:[edge.quality[0],edge.quality[1]],crossings:edge.crossing?1:0,startNode:startSnap.node,endNode:endSnap.node,accessStart:0,accessEnd:0});}
-    const scoreWithDirect=route=>route.distance*(1+weights.reduce((sum,w,i)=>sum+w*(1-route.quality[i]),0)),shortest=[...runs.map(run=>run.shortest),...direct].sort((a,b)=>a.distance-b.distance)[0],recommended=[...runs.map(run=>run.recommended),...direct].sort((a,b)=>scoreWithDirect(a)-scoreWithDirect(b)||a.distance-b.distance)[0],pool=new Map();runs.forEach(run=>run.candidates.forEach(route=>pool.set(route.edgeIds.join(',')+`/${route.startNode}/${route.endNode}`,route)));direct.forEach(route=>pool.set(`direct/${route.edgeIds[0]}/${route.distance}`,route));return{shortest,recommended,candidates:[...pool.values()].sort((a,b)=>scoreWithDirect(a)-scoreWithDirect(b)||a.distance-b.distance),generated:[...pool.values()].length,extra,speed,weights:[...weights],start:shortest.startNode,end:shortest.endNode,method:'resource-constrained-a-star-with-segment-snap',optimalForModel:true};
-  }
+   function recommendFromPoints(startPoint,endPoint,weights=defaults,extra=5,speed=80){
+    const startSnap=nearest(startPoint),endSnap=nearest(endPoint),starts=startSnap.nodes||[startSnap.node],ends=endSnap.nodes||[endSnap.node],runs=[];
+    if(!startSnap.p||!endSnap.p||startSnap.edgeId===null||endSnap.edgeId===null)throw Error('공개 보행망에 연결된 위치를 선택해 주세요.');
+    const attach=(route,startNode,endNode)=>{
+     const startAccess=snapToNode(startSnap,startNode),endAccess=snapToNode(endSnap,endNode).reverse(),middle=geometry(route);
+     const routeGeometry=compact([...startAccess,...middle.slice(1),...endAccess.slice(1)]);
+     const accessStart=pathLength(startAccess),accessEnd=pathLength(endAccess);
+     return{...route,distance:route.distance+accessStart+accessEnd,geometry:routeGeometry,startNode,endNode,accessStart,accessEnd};
+    };
+    for(const start of starts)for(const end of ends){if(start===end)continue;const result=recommend(start,end,weights,extra,speed);runs.push({shortest:attach(result.shortest,start,end),recommended:attach(result.recommended,start,end),candidates:result.candidates.map(route=>attach(route,start,end)),generated:result.generated});}
+    if(!runs.length)throw Error('공개 보행망에서 연결된 경로를 찾지 못했어요.');
+    const score=route=>route.distance*(1+weights.reduce((sum,w,i)=>sum+w*(1-route.quality[i]),0));
+    const direct=[];
+    if(startSnap.edgeId===endSnap.edgeId){
+     const edge=data.edges[startSnap.edgeId],geometry=pathBetweenSnaps(edge,startSnap,endSnap),distance=pathLength(geometry);
+     direct.push({edgeIds:[edge.id],nodes:[edge.a,edge.b],geometry,distance,quality:[edge.quality[0],edge.quality[1]],crossings:edge.crossing?1:0,startNode:startSnap.node,endNode:endSnap.node,accessStart:0,accessEnd:0});
+    }
+    const scoreWithDirect=route=>route.distance*(1+weights.reduce((sum,w,i)=>sum+w*(1-route.quality[i]),0)),shortest=[...runs.map(run=>run.shortest),...direct].sort((a,b)=>a.distance-b.distance)[0],recommended=[...runs.map(run=>run.recommended),...direct].sort((a,b)=>scoreWithDirect(a)-scoreWithDirect(b)||a.distance-b.distance)[0],pool=new Map();
+    runs.forEach(run=>run.candidates.forEach(route=>pool.set(route.edgeIds.join(',')+`/${route.startNode}/${route.endNode}`,route)));
+    direct.forEach(route=>pool.set(`direct/${route.edgeIds[0]}/${route.distance}`,route));
+    return{shortest,recommended,candidates:[...pool.values()].sort((a,b)=>scoreWithDirect(a)-scoreWithDirect(b)||a.distance-b.distance),generated:[...pool.values()].length,extra,speed,weights:[...weights],start:shortest.startNode,end:shortest.endNode,method:'resource-constrained-a-star-with-segment-snap',optimalForModel:true};
+   }
   function nearest(p){
    let best={node:-1,distance:Infinity,p:null,edgeId:null,segment:0,t:0,offsetAlong:0};
    const project=(point,a,b)=>{
@@ -59,7 +72,20 @@ export function makeEngine(data){
    }}
    return best;
   }
-  function geometry(r){if(r.geometry)return r.geometry;const points=[];r.edgeIds.forEach((eid,i)=>{const e=data.edges[eid],part=e.a===r.nodes[i]?e.geometry:[...e.geometry].reverse();points.push(...(i?part.slice(1):part));});return points;}
+   function compact(points){return points.filter((p,i)=>!i||p[0]!==points[i-1][0]||p[1]!==points[i-1][1]);}
+   function pathLength(points){return points.slice(1).reduce((sum,p,i)=>sum+meters(points[i],p),0);}
+   function snapToNode(snap,node){
+    const edge=data.edges[snap.edgeId];
+    if(!edge||(node!==edge.a&&node!==edge.b))throw Error('경로 끝점을 보행 링크에 연결하지 못했어요.');
+    const before=compact([...edge.geometry.slice(0,snap.segment+1),snap.p]),after=compact([snap.p,...edge.geometry.slice(snap.segment+1)]);
+    return node===edge.a?before.reverse():after;
+   }
+   function pathBetweenSnaps(edge,startSnap,endSnap){
+    const forward=startSnap.offsetAlong<=endSnap.offsetAlong,from=forward?startSnap:endSnap,to=forward?endSnap:startSnap;
+    const path=compact([from.p,...edge.geometry.slice(from.segment+1,to.segment+1),to.p]);
+    return forward?path:path.reverse();
+   }
+   function geometry(r){if(r.geometry)return r.geometry;const points=[];r.edgeIds.forEach((eid,i)=>{const e=data.edges[eid],part=e.a===r.nodes[i]?e.geometry:[...e.geometry].reverse();points.push(...(i?part.slice(1):part));});return points;}
   return{route,recommend,recommendFromPoints,constrained,summarize,nearest,geometry};
 }
 export const features=r=>[r.distance/1000,...r.quality.map(q=>r.distance/1000*(1-q))];
