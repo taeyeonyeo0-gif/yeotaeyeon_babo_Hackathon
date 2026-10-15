@@ -18,12 +18,13 @@ const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'
 let data,engine,map,roadLayer,lineLayer,pinLayer,lampLayer,cameraLayer,weights=[...defaults],last,selected,shown=[],pairRoutes=[],samples=[],pick=null,watch=null,gpsMarker,gpsCircle,worker,serial=0,requestId=0;const pending=new Map();let positions={start:null,end:null},placeLabels=new Map();
 const status=(text,error=false)=>{$('#status').textContent=text;$('#status').classList.toggle('error',error);};
 const signature=r=>r.edgeIds.join(',');
+function clearRoute(){last=null;shown=[];selected=0;pairRoutes=[];lineLayer?.clearLayers();$('#results').innerHTML='';$('#pairs').innerHTML='';$('#route-reason').textContent='';}
 function controls(){ $('#weights').innerHTML=names.map((n,i)=>`<div class="rangehead"><label for="w${i}">${n}</label><b id="v${i}">${weights[i].toFixed(1)}</b></div><input id="w${i}" type="range" min="-5" max="5" step="0.1" value="${weights[i]}">`).join('');names.forEach((_,i)=>$('#w'+i).oninput=e=>{weights[i]=+e.target.value;$('#v'+i).textContent=weights[i].toFixed(1);$('#mode').textContent='직접 조정한 가중치';schedule();});}
 let timer;function schedule(){clearTimeout(timer);timer=setTimeout(calculate,220);}
 function setPoint(key,p,label){
   const n=engine.nearest(p);
- if(n.distance>45)throw Error('선택한 위치 가까이에 연결된 보행망이 없어요. 지도의 회색 보행로를 선택해 주세요.');
- positions[key]={node:n.node,p:n.p||p,raw:p,label,offset:n.distance};$('#'+key).value=label;drawPins();
+  if(n.distance>45)throw Error('선택한 위치 가까이에 연결된 보행망이 없어요. 지도의 회색 보행로를 선택해 주세요.');
+  clearRoute();positions[key]={node:n.node,p:n.p||p,raw:p,label,offset:n.distance};$('#'+key).value=label;drawPins();
  $('#snap-info').textContent=Object.entries(positions).filter(([,v])=>v).map(([k,v])=>`${k==='start'?'출발':'도착'} 장소에서 공개 보행망 접점까지 ${Math.round(v.offset)}m`).join(' · ')+' · 접점 사이만 안내';
 }
 function resolve(key){const input=$('#'+key).value.trim();if(positions[key]?.label===input)return;let p=placeLabels.get(input);if(!p){const all=[...placeLabels.entries()].filter(([s])=>s.includes(input));if(input&&all.length===1)p=all[0][1];}if(!p)throw Error(`${key==='start'?'출발':'도착'} 장소를 목록에서 고르거나 지도에서 선택해 주세요.`);setPoint(key,p.p,p.label);}
