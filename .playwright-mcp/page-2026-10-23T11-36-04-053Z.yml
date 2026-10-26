@@ -1,0 +1,223 @@
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - link "귀로 처음으로" [ref=e3] [cursor=pointer]:
+      - /url: "#top"
+      - img [ref=e5]
+      - generic [ref=e9]:
+        - strong [ref=e10]: 귀로
+        - generic [ref=e11]: 歸路
+    - navigation "주요 메뉴" [ref=e12]:
+      - link "경로 탐색" [ref=e13] [cursor=pointer]:
+        - /url: "#route-workspace"
+      - link "경로 비교" [ref=e14] [cursor=pointer]:
+        - /url: "#results"
+      - link "내 기록·제보" [ref=e15] [cursor=pointer]:
+        - /url: "#cloud-panel"
+      - link "데이터" [ref=e16] [cursor=pointer]:
+        - /url: "#data-details"
+    - generic [ref=e17]:
+      - link "로그인" [ref=e18] [cursor=pointer]:
+        - /url: "#cloud-panel"
+        - generic [ref=e19]: 로그인
+      - generic [ref=e20]:
+        - img [ref=e21]
+        - img [ref=e24]
+        - generic [ref=e26]: 낮 테마
+        - combobox "테마 선택" [ref=e27]:
+          - option "자동" [selected]
+          - option "라이트"
+          - option "다크"
+  - main [ref=e28]:
+    - generic [ref=e29]:
+      - generic [ref=e30]:
+        - paragraph [ref=e31]: CITY WALK INTELLIGENCE · 천호 생활권
+        - heading "가장 빠른 길보다, 무사히 돌아가는 길." [level=1] [ref=e32]
+        - paragraph [ref=e33]: 보행망과 등록 안전시설을 비교해 오늘의 귀갓길을 선택하세요.
+      - complementary [ref=e34]:
+        - generic [ref=e35]: i
+        - generic [ref=e36]: 공개자료 기반 참고 정보입니다. 시설 작동·점등과 현장 안전은 실시간 확인되지 않습니다.
+    - status [ref=e37]: 16개 중복 없는 후보 중 16개가 추가 시간 조건을 만족합니다. 시간은 보행망 접점 사이의 추정치이며 신호 대기는 제외됩니다.
+    - region "귀로 경로 찾기" [ref=e39]:
+      - complementary [ref=e40]:
+        - generic [ref=e41]:
+          - generic [ref=e42]:
+            - paragraph [ref=e43]: PLAN YOUR RETURN
+            - heading "경로 설정" [level=2] [ref=e44]
+          - generic [ref=e45]: 실제 보행망
+        - generic [ref=e47]:
+          - generic [ref=e48]:
+            - generic [ref=e49]: 출발 장소
+            - combobox "출발 장소" [ref=e52]: 천호역 2번 출구
+            - generic [ref=e53]:
+              - button "지도에서 출발 선택" [ref=e54] [cursor=pointer]:
+                - generic [ref=e55]: ＋
+                - text: 지도에서 출발 선택
+              - button "내 위치" [ref=e56] [cursor=pointer]:
+                - generic [ref=e57]: ◎
+                - text: 내 위치
+          - button "출발지와 도착지 바꾸기" [ref=e58] [cursor=pointer]:
+            - img [ref=e59]
+            - generic [ref=e61]: 출발·도착 바꾸기
+          - generic [ref=e62]:
+            - generic [ref=e63]: 도착 장소
+            - combobox "도착 장소" [ref=e66]: 강동경찰서 천호지구대 · 구천면로 141
+            - button "지도에서 도착 선택" [ref=e67] [cursor=pointer]:
+              - generic [ref=e68]: ＋
+              - text: 지도에서 도착 선택
+          - paragraph [ref=e69]: 출발 장소에서 공개 보행망 접점까지 7m · 도착 장소에서 공개 보행망 접점까지 6m · 접점 사이만 안내
+          - button "경로 비교하기" [ref=e70] [cursor=pointer]:
+            - generic [ref=e71]: 경로 비교하기
+            - img [ref=e72]
+          - generic [ref=e74]:
+            - generic [ref=e75]:
+              - generic [ref=e76]: 추가로 걸을 수 있는 시간
+              - generic [ref=e77]: 5분
+            - slider "추가로 걸을 수 있는 시간" [ref=e78] [cursor=pointer]: "5"
+            - generic [ref=e79]: 걷는 속도
+            - combobox "걷는 속도" [ref=e80]:
+              - option "천천히 · 60m/분"
+              - option "보통 · 80m/분" [selected]
+              - option "빠르게 · 100m/분"
+            - group [ref=e81]:
+              - generic "추천 기준 조정" [ref=e82] [cursor=pointer]
+          - paragraph [ref=e83]:
+            - img [ref=e84]
+            - text: 현재 위치는 직접 요청할 때만 사용돼요.
+      - region "실제 보행 경로 지도" [ref=e87]:
+        - generic [ref=e88]:
+          - generic [ref=e89]:
+            - paragraph [ref=e90]: 천호 · 성내 일대
+            - heading "실제 보행 경로 보행 링크 2,079개" [level=2] [ref=e145]:
+              - text: 실제 보행 경로
+              - generic [ref=e146]: 보행 링크 2,079개
+          - button "경로 전체" [ref=e92] [cursor=pointer]:
+            - img [ref=e93]
+            - generic [ref=e95]: 경로 전체
+        - generic "지도 표시 항목" [ref=e96]:
+          - generic [ref=e97]: 선택 경로
+          - generic [ref=e99]: 최단 경로
+          - generic [ref=e101]: 공개 보행 링크
+          - generic [ref=e104] [cursor=pointer]:
+            - checkbox "보안등" [ref=e105]
+            - text: 보안등
+          - generic [ref=e107] [cursor=pointer]:
+            - checkbox "CCTV·안심벨" [checked] [ref=e108]
+            - text: CCTV·안심벨
+        - generic "천호동 보행망과 안전시설 지도" [ref=e110]:
+          - generic:
+            - generic:
+              - button "출" [ref=e148] [cursor=pointer]
+              - button "도" [ref=e149] [cursor=pointer]
+          - generic:
+            - generic [ref=e150]:
+              - button "Zoom in" [ref=e151] [cursor=pointer]: +
+              - button "Zoom out" [ref=e152] [cursor=pointer]: −
+            - generic [ref=e154]: 50 m
+            - generic [ref=e155]:
+              - link "Leaflet" [ref=e156] [cursor=pointer]:
+                - /url: https://leafletjs.com
+                - img [ref=e157]
+                - text: Leaflet
+              - text: "| ©"
+              - link "OpenStreetMap" [ref=e161] [cursor=pointer]:
+                - /url: https://www.openstreetmap.org/copyright
+              - text: contributors
+        - generic [ref=e111]:
+          - generic [ref=e112]: ⌖
+          - generic [ref=e113]: 회색 선은 경로 계산에 쓰는 공개 보행 링크예요. 지도 타일에 보이지 않는 골목·통로가 포함될 수 있어 현장 확인이 필요합니다.
+    - region "경로 비교 결과" [ref=e162]:
+      - button "최단 거리 거리 우선 7.8 분 · 0.62km 보안등 근접 49% 등록 CCTV 근접 0% 보안등 30m·CCTV 50m 내 구간 비율. 안전 확률이나 실제 밝기를 뜻하지 않습니다." [pressed] [ref=e163] [cursor=pointer]:
+        - generic [ref=e164]:
+          - heading "최단 거리" [level=2] [ref=e165]
+          - generic [ref=e166]: 거리 우선
+        - generic [ref=e167]: 7.8 분 · 0.62km
+        - generic [ref=e168]:
+          - generic [ref=e169]:
+            - text: 보안등 근접
+            - generic [ref=e170]: 49%
+          - generic [ref=e173]:
+            - text: 등록 CCTV 근접
+            - generic [ref=e174]: 0%
+        - paragraph [ref=e176]: 보안등 30m·CCTV 50m 내 구간 비율. 안전 확률이나 실제 밝기를 뜻하지 않습니다.
+      - button "안전 우선 +0.2분 8.0 분 · 0.64km 보안등 근접 92% 등록 CCTV 근접 51% 보안등 30m·CCTV 50m 내 구간 비율. 안전 확률이나 실제 밝기를 뜻하지 않습니다. 추천" [ref=e177] [cursor=pointer]:
+        - generic [ref=e178]:
+          - heading "안전 우선" [level=2] [ref=e179]
+          - generic [ref=e180]: +0.2분
+        - generic [ref=e181]: 8.0 분 · 0.64km
+        - generic [ref=e182]:
+          - generic [ref=e183]:
+            - text: 보안등 근접
+            - generic [ref=e184]: 92%
+          - generic [ref=e187]:
+            - text: 등록 CCTV 근접
+            - generic [ref=e188]: 51%
+        - paragraph [ref=e191]: 보안등 30m·CCTV 50m 내 구간 비율. 안전 확률이나 실제 밝기를 뜻하지 않습니다.
+        - text: 추천
+    - paragraph [ref=e192]: 안전 우선 경로는 최단 대비 0.2분 추가 · 보안등 근접 구간 43%p 변화 · 등록 CCTV 근접 구간 51%p 변화
+    - generic [ref=e114]:
+      - generic [ref=e115]:
+        - paragraph [ref=e116]: A ROUTE THAT FEELS RIGHT
+        - heading "내 취향을 반영해볼까요?" [level=2] [ref=e117]
+        - paragraph [ref=e118]: 여러 출발·도착 경로 중 선호하는 길을 고르면 다음 추천에 반영할 수 있어요.
+        - paragraph [ref=e119]: 선택 0개
+        - button "선택으로 추천 기준 학습" [disabled] [ref=e120]
+        - button "선택 기록 초기화" [ref=e121] [cursor=pointer]
+        - paragraph [ref=e122]: 기록은 현재 탭에만 저장되며 새로고침하면 사라져요. 안전성을 예측하거나 보장하는 기능은 아닙니다.
+      - generic [ref=e123]:
+        - generic [ref=e193]:
+          - article [ref=e194]:
+            - heading "A · 최단 거리" [level=3] [ref=e195]
+            - generic [ref=e196]: 7.8 분
+            - generic [ref=e197]:
+              - term [ref=e198]: 보안등 근접
+              - definition [ref=e199]: 49%
+              - term [ref=e200]: 등록 CCTV 근접
+              - definition [ref=e201]: 0%
+            - button "이 길이 좋아요" [ref=e202] [cursor=pointer]
+          - article [ref=e203]:
+            - heading "B · 안전 우선" [level=3] [ref=e204]
+            - generic [ref=e205]: 8.0 분
+            - generic [ref=e206]:
+              - term [ref=e207]: 보안등 근접
+              - definition [ref=e208]: 92%
+              - term [ref=e209]: 등록 CCTV 근접
+              - definition [ref=e210]: 51%
+            - button "이 길이 좋아요" [ref=e211] [cursor=pointer]
+        - paragraph [ref=e124]: 실제 경로를 먼저 비교해 주세요.
+    - region "계정과 보행 환경 제보" [ref=e125]:
+      - generic [ref=e126]:
+        - generic [ref=e127]:
+          - paragraph [ref=e128]: ACCOUNT / COMMUNITY
+          - heading "계정과 보행 환경 제보" [level=2] [ref=e129]
+          - paragraph [ref=e130]: 즐겨찾기와 제보 내역은 로그인한 본인 계정에서만 확인할 수 있어요.
+        - status [ref=e131]: 로그인이 필요합니다.
+      - paragraph [ref=e132]: "인증 후 이동 주소: https://rtuen5ol07vsiygm.jitda.io/ · Supabase Auth의 URL Configuration에서 https://rtuen5ol07vsiygm.jitda.io/**를 허용해 주세요."
+      - paragraph [ref=e133]:
+        - text: "초기 설정: Supabase SQL Editor에서"
+        - code [ref=e134]: supabase/schema.sql
+        - text: 을 실행해 테이블과 개인별 접근 정책을 준비해 주세요.
+        - code [ref=e135]: service_role
+        - text: 키는 사용하지 않습니다.
+      - generic [ref=e212]:
+        - generic [ref=e213]:
+          - generic [ref=e214]:
+            - text: 이메일
+            - textbox "이메일" [ref=e215]:
+              - /placeholder: name@example.com
+          - generic [ref=e216]:
+            - text: 비밀번호
+            - textbox "비밀번호" [ref=e217]:
+              - /placeholder: 6자 이상
+          - generic [ref=e218]:
+            - button "로그인" [ref=e219] [cursor=pointer]
+            - button "회원가입" [ref=e220] [cursor=pointer]
+        - status [ref=e221]
+    - group [ref=e136]:
+      - generic "ABOUT THE DATA 사용한 데이터와 경로 계산 방식" [ref=e137] [cursor=pointer]:
+        - generic [ref=e138]:
+          - generic [ref=e139]: ABOUT THE DATA
+          - strong [ref=e140]: 사용한 데이터와 경로 계산 방식
+        - generic [ref=e141]: ＋
+    - generic [ref=e142]:
+      - generic [ref=e143]: 귀로 歸路
+      - generic [ref=e144]: 가장 빠른 길보다, 무사히 돌아가는 길. · 공개자료 기반 참고 정보

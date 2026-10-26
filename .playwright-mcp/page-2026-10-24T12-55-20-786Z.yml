@@ -1,0 +1,52 @@
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - link "안심보행맵 처음으로" [ref=e3] [cursor=pointer]:
+      - /url: "#top"
+      - generic [ref=e5]:
+        - strong [ref=e6]: 안심보행맵
+        - generic [ref=e7]: Safe Walk Map
+    - navigation "주요 메뉴" [ref=e8]:
+      - link "경로 탐색" [ref=e9] [cursor=pointer]:
+        - /url: "#panel-route"
+      - link "경로 비교" [ref=e10] [cursor=pointer]:
+        - /url: "#panel-route"
+      - link "내 기록·제보" [ref=e11] [cursor=pointer]:
+        - /url: "#panel-account"
+      - link "데이터" [ref=e12] [cursor=pointer]:
+        - /url: "#panel-data"
+    - generic [ref=e13]:
+      - button "로그인" [ref=e14] [cursor=pointer]:
+        - generic [ref=e15]: 로그인
+      - generic [ref=e16]:
+        - img [ref=e17]
+        - combobox "테마 선택 모드" [ref=e19]:
+          - option "자동" [selected]
+          - option "라이트"
+          - option "다크"
+  - main [ref=e20]:
+    - region "안심보행맵 경로 찾기" [ref=e21]:
+      - complementary [ref=e22]:
+        - button "탭 패널 열기" [ref=e23] [cursor=pointer]:
+          - generic [ref=e25]: 탭 패널 열기
+      - region "실제 보행 경로 지도" [ref=e26]:
+        - generic [ref=e27]:
+          - generic [ref=e28]:
+            - paragraph [ref=e29]: 천호 · 성내 일대
+            - heading "실제 보행 경로" [level=2] [ref=e30]: 실제 보행 경로
+          - button "경로 전체" [ref=e31] [cursor=pointer]:
+            - img [ref=e32]
+            - generic [ref=e34]: 경로 전체
+        - generic "지도 표시 항목" [ref=e35]:
+          - generic [ref=e36]: 선택 경로
+          - generic [ref=e38]: 최단 경로
+          - generic [ref=e40]: 공개 보행 링크
+          - generic [ref=e42] [cursor=pointer]:
+            - checkbox "보안등" [ref=e43]
+            - text: 보안등
+          - generic [ref=e45] [cursor=pointer]:
+            - checkbox "CCTV·안심벨" [checked] [ref=e46]
+            - text: CCTV·안심벨
+        - generic "천호동 보행망과 안전시설 지도" [ref=e48]
+        - generic [ref=e49]:
+          - generic [ref=e50]: ⌖
+          - generic [ref=e51]: 회색 선은 경로 계산에 쓰는 공개 보행 링크예요. 지도 타일에 보이지 않는 골목·통로가 포함될 수 있어 현장 확인이 필요합니다.

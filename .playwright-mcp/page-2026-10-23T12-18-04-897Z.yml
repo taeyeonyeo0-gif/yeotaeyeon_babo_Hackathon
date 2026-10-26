@@ -1,0 +1,91 @@
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - link "귀로 처음으로" [ref=e3] [cursor=pointer]:
+      - /url: "#top"
+      - img [ref=e5]
+      - generic [ref=e9]:
+        - strong [ref=e10]: 귀로
+        - generic [ref=e11]: 歸路
+    - navigation "주요 메뉴" [ref=e12]:
+      - link "경로 탐색" [ref=e13] [cursor=pointer]:
+        - /url: "#route-workspace"
+      - link "경로 비교" [ref=e14] [cursor=pointer]:
+        - /url: "#results"
+      - link "내 기록·제보" [ref=e15] [cursor=pointer]:
+        - /url: "#cloud-panel"
+      - link "데이터" [ref=e16] [cursor=pointer]:
+        - /url: "#data-details"
+    - generic [ref=e17]:
+      - link "로그인" [ref=e18] [cursor=pointer]:
+        - /url: "#cloud-panel"
+        - generic [ref=e19]: 로그인
+      - combobox "테마 선택" [ref=e21]:
+        - option "자동" [selected]
+        - option "라이트"
+        - option "다크"
+  - main [ref=e22]:
+    - region "귀로 경로 찾기" [ref=e23]:
+      - complementary [ref=e24]:
+        - button "경로 설정 열기" [ref=e25] [cursor=pointer]:
+          - generic [ref=e27]: 경로 설정 열기
+        - generic [ref=e28]:
+          - generic [ref=e29]:
+            - paragraph [ref=e30]: PLAN YOUR RETURN
+            - heading "경로 설정" [level=2] [ref=e31]
+          - generic [ref=e32]: 실제 보행망
+        - status [ref=e34]: 실제 보행망을 불러오는 중…
+      - region "실제 보행 경로 지도" [ref=e36]:
+        - generic [ref=e37]:
+          - generic [ref=e38]:
+            - paragraph [ref=e39]: 천호 · 성내 일대
+            - heading "실제 보행 경로" [level=2] [ref=e40]: 실제 보행 경로
+          - button "경로 전체" [ref=e41] [cursor=pointer]:
+            - img [ref=e42]
+            - generic [ref=e44]: 경로 전체
+        - generic "지도 표시 항목" [ref=e45]:
+          - generic [ref=e46]: 선택 경로
+          - generic [ref=e48]: 최단 경로
+          - generic [ref=e50]: 공개 보행 링크
+          - generic [ref=e52] [cursor=pointer]:
+            - checkbox "보안등" [ref=e53]
+            - text: 보안등
+          - generic [ref=e55] [cursor=pointer]:
+            - checkbox "CCTV·안심벨" [checked] [ref=e56]
+            - text: CCTV·안심벨
+        - generic "천호동 보행망과 안전시설 지도" [ref=e58]
+        - generic [ref=e59]:
+          - generic [ref=e60]: ⌖
+          - generic [ref=e61]: 회색 선은 경로 계산에 쓰는 공개 보행 링크예요. 지도 타일에 보이지 않는 골목·통로가 포함될 수 있어 현장 확인이 필요합니다.
+    - generic [ref=e62]:
+      - generic [ref=e63]:
+        - paragraph [ref=e64]: A ROUTE THAT FEELS RIGHT
+        - heading "내 취향을 반영해볼까요?" [level=2] [ref=e65]
+        - paragraph [ref=e66]: 여러 출발·도착 경로 중 선호하는 길을 고르면 다음 추천에 반영할 수 있어요.
+        - paragraph [ref=e67]: 선택 0개
+        - button "선택으로 추천 기준 학습" [disabled] [ref=e68]
+        - button "선택 기록 초기화" [ref=e69] [cursor=pointer]
+        - paragraph [ref=e70]: 기록은 현재 탭에만 저장되며 새로고침하면 사라져요. 안전성을 예측하거나 보장하는 기능은 아닙니다.
+      - paragraph [ref=e72]: 실제 경로를 먼저 비교해 주세요.
+    - region "계정과 보행 환경 제보" [ref=e73]:
+      - generic [ref=e74]:
+        - generic [ref=e75]:
+          - paragraph [ref=e76]: ACCOUNT / COMMUNITY
+          - heading "계정과 보행 환경 제보" [level=2] [ref=e77]
+          - paragraph [ref=e78]: 즐겨찾기와 제보 내역은 로그인한 본인 계정에서만 확인할 수 있어요.
+        - status [ref=e79]: Supabase 연결을 확인하고 있어요.
+      - paragraph [ref=e80]
+      - paragraph [ref=e81]:
+        - text: "초기 설정: Supabase SQL Editor에서"
+        - code [ref=e82]: supabase/schema.sql
+        - text: 을 실행해 테이블과 개인별 접근 정책을 준비해 주세요.
+        - code [ref=e83]: service_role
+        - text: 키는 사용하지 않습니다.
+    - group [ref=e84]:
+      - generic "ABOUT THE DATA 사용한 데이터와 경로 계산 방식" [ref=e85] [cursor=pointer]:
+        - generic [ref=e86]:
+          - generic [ref=e87]: ABOUT THE DATA
+          - strong [ref=e88]: 사용한 데이터와 경로 계산 방식
+        - generic [ref=e89]: ＋
+    - generic [ref=e90]:
+      - generic [ref=e91]: 귀로 歸路
+      - generic [ref=e92]: 가장 빠른 길보다, 무사히 돌아가는 길. · 공개자료 기반 참고 정보

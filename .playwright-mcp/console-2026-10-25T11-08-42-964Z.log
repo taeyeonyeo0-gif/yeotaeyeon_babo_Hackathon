@@ -1,0 +1,4 @@
+[      35ms] [INFO] [preview-bridge] v1.1.0 @ https://rtuen5ol07vsiygm.jitda.io/__preview-bridge.js:1
+[   18088ms] [ERROR] Failed to load resource: the server responded with a status of 400 () @ https://gxttppuxcbsxtddllitj.supabase.co/storage/v1/bucket/avatars:0
+[   83781ms] [ERROR] Failed to load resource: the server responded with a status of 400 () @ https://gxttppuxcbsxtddllitj.supabase.co/storage/v1/bucket/avatars:0
+[  136140ms] [ERROR] Failed to load resource: the server responded with a status of 400 () @ https://gxttppuxcbsxtddllitj.supabase.co/storage/v1/bucket/avatars:0

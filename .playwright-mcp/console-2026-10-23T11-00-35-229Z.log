@@ -1,0 +1,7 @@
+[      88ms] [INFO] [preview-bridge] v1.1.0 @ https://rtuen5ol07vsiygm.jitda.io/__preview-bridge.js:1
+[     397ms] TypeError: Cannot set properties of null (setting 'textContent')
+    at sync (https://rtuen5ol07vsiygm.jitda.io/app.mjs?t=1792753191188&v=ui-theme-only-1:46:365)
+    at initializeMobileControls (https://rtuen5ol07vsiygm.jitda.io/app.mjs?t=1792753191188&v=ui-theme-only-1:46:869)
+    at https://rtuen5ol07vsiygm.jitda.io/app.mjs?t=1792753191188&v=ui-theme-only-1:120:1
+[   42975ms] [INFO] [preview-bridge] v1.1.0 @ https://rtuen5ol07vsiygm.jitda.io/__preview-bridge.js:1
+[   80276ms] [INFO] [preview-bridge] v1.1.0 @ https://rtuen5ol07vsiygm.jitda.io/__preview-bridge.js:1

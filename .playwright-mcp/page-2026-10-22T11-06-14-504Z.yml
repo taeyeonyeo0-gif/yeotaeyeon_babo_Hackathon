@@ -1,0 +1,117 @@
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - link "밤길 처음으로" [ref=e3] [cursor=pointer]:
+      - /url: ./
+      - img [ref=e5]
+      - generic [ref=e7]: 밤길 천호 생활권
+    - generic [ref=e8]:
+      - generic [ref=e10]: 공개 데이터 기반 경로 안내
+      - link "데이터 안내" [ref=e11] [cursor=pointer]:
+        - /url: "#data-details"
+        - text: 데이터 안내 ↗
+  - main [ref=e12]:
+    - generic [ref=e13]:
+      - generic [ref=e14]:
+        - paragraph [ref=e15]: NIGHTPATH / WALK HOME
+        - heading "오늘 밤, 어떤 길로 걸을까요?" [level=1] [ref=e16]
+        - paragraph [ref=e17]: 실제 보행로와 주변 시설 정보를 살펴보고, 내게 맞는 경로를 골라보세요.
+      - complementary [ref=e18]:
+        - generic [ref=e19]: i
+        - generic [ref=e20]:
+          - text: 시설 작동·점등 여부와 실시간 안전 상태는
+          - text: 확인되지 않은 참고용 정보예요.
+    - status [ref=e21]: 실제 보행망을 불러오는 중…
+    - region "밤길 경로 찾기" [ref=e23]:
+      - complementary [ref=e24]:
+        - generic [ref=e25]:
+          - generic [ref=e26]: "01"
+          - generic [ref=e27]:
+            - paragraph [ref=e28]: YOUR WALK
+            - heading "경로 설정" [level=2] [ref=e29]
+        - generic [ref=e30]:
+          - generic [ref=e31]: 출발 장소
+          - combobox "출발 장소" [ref=e34]
+          - generic [ref=e35]:
+            - button "지도에서 출발 선택" [ref=e36] [cursor=pointer]:
+              - generic [ref=e37]: ＋
+              - text: 지도에서 출발 선택
+            - button "내 위치" [ref=e38] [cursor=pointer]:
+              - generic [ref=e39]: ◎
+              - text: 내 위치
+        - generic [ref=e40]:
+          - generic [ref=e41]: 도착 장소
+          - combobox "도착 장소" [ref=e44]
+          - button "지도에서 도착 선택" [ref=e45] [cursor=pointer]:
+            - generic [ref=e46]: ＋
+            - text: 지도에서 도착 선택
+        - paragraph [ref=e47]
+        - button "경로 비교하기" [disabled] [ref=e48]:
+          - generic [ref=e49]: 경로 비교하기
+          - img [ref=e50]
+        - generic [ref=e52]:
+          - generic [ref=e53]:
+            - generic [ref=e54]: 추가로 걸을 수 있는 시간
+            - generic [ref=e55]: 5분
+          - slider "추가로 걸을 수 있는 시간" [ref=e56] [cursor=pointer]: "5"
+          - generic [ref=e57]: 걷는 속도
+          - combobox "걷는 속도" [ref=e58]:
+            - option "천천히 · 60m/분"
+            - option "보통 · 80m/분" [selected]
+            - option "빠르게 · 100m/분"
+          - group [ref=e59]:
+            - generic "추천 기준 조정" [ref=e60] [cursor=pointer]
+        - paragraph [ref=e61]:
+          - img [ref=e62]
+          - text: 현재 위치는 직접 요청할 때만 사용돼요.
+      - region "실제 보행 경로 지도" [ref=e65]:
+        - generic [ref=e66]:
+          - generic [ref=e67]:
+            - paragraph [ref=e68]: 천호 · 성내 일대
+            - heading "실제 보행 경로" [level=2] [ref=e69]: 실제 보행 경로
+          - generic [ref=e70]:
+            - generic [ref=e71]:
+              - img [ref=e72]
+              - img [ref=e75]
+              - generic [ref=e77]: 낮 테마
+              - combobox "지도 테마 선택" [ref=e78]:
+                - option "자동" [selected]
+                - option "밝게"
+                - option "어둡게"
+            - button "경로 전체" [ref=e79] [cursor=pointer]:
+              - img [ref=e80]
+              - generic [ref=e82]: 경로 전체
+        - generic "지도 표시 항목" [ref=e83]:
+          - generic [ref=e84]: 선택 경로
+          - generic [ref=e86]: 최단 경로
+          - generic [ref=e88]: 공개 보행 링크
+          - generic [ref=e91] [cursor=pointer]:
+            - checkbox "보안등" [ref=e92]
+            - text: 보안등
+          - generic [ref=e94] [cursor=pointer]:
+            - checkbox "CCTV·안심벨" [checked] [ref=e95]
+            - text: CCTV·안심벨
+        - generic "천호동 보행망과 안전시설 지도" [ref=e97]
+        - generic [ref=e98]:
+          - generic [ref=e99]: ⌖
+          - generic [ref=e100]: 회색 선은 경로 계산에 쓰는 공개 보행 링크예요. 지도 타일에 보이지 않는 골목·통로가 포함될 수 있어 현장 확인이 필요합니다.
+    - region "경로 비교 결과"
+    - paragraph
+    - generic [ref=e101]:
+      - generic [ref=e102]:
+        - paragraph [ref=e103]: A ROUTE THAT FEELS RIGHT
+        - heading "내 취향을 반영해볼까요?" [level=2] [ref=e104]
+        - paragraph [ref=e105]: 여러 출발·도착 경로 중 선호하는 길을 고르면 다음 추천에 반영할 수 있어요.
+        - paragraph [ref=e106]: 선택 0개
+        - button "선택으로 추천 기준 학습" [disabled] [ref=e107]
+        - button "선택 기록 초기화" [ref=e108] [cursor=pointer]
+        - paragraph [ref=e109]: 기록은 현재 탭에만 저장되며 새로고침하면 사라져요. 안전성을 예측하거나 보장하는 기능은 아닙니다.
+      - paragraph [ref=e111]: 실제 경로를 먼저 비교해 주세요.
+    - group [ref=e112]:
+      - generic "ABOUT THE DATA 사용한 데이터와 경로 계산 방식" [ref=e113] [cursor=pointer]:
+        - generic [ref=e114]:
+          - generic [ref=e115]: ABOUT THE DATA
+          - strong [ref=e116]: 사용한 데이터와 경로 계산 방식
+        - generic [ref=e117]: ＋
+    - generic [ref=e118]:
+      - generic [ref=e119]: 밤길 · NIGHTPATH
+      - generic [ref=e120]: 공개자료 기반 참고 정보 · 이동 전 현장 상황을 확인해 주세요.

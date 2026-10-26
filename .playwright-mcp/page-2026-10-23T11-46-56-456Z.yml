@@ -1,0 +1,104 @@
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - link "귀로 처음으로" [ref=e3] [cursor=pointer]:
+      - /url: "#top"
+      - img [ref=e5]
+      - generic [ref=e9]:
+        - strong [ref=e10]: 귀로
+        - generic [ref=e11]: 歸路
+    - navigation "주요 메뉴" [ref=e12]:
+      - link "경로 탐색" [ref=e13] [cursor=pointer]:
+        - /url: "#route-workspace"
+      - link "경로 비교" [ref=e14] [cursor=pointer]:
+        - /url: "#results"
+      - link "내 기록·제보" [ref=e15] [cursor=pointer]:
+        - /url: "#cloud-panel"
+      - link "데이터" [ref=e16] [cursor=pointer]:
+        - /url: "#data-details"
+    - generic [ref=e17]:
+      - link "로그인" [ref=e18] [cursor=pointer]:
+        - /url: "#cloud-panel"
+        - generic [ref=e19]: 로그인
+      - generic [ref=e20]:
+        - img [ref=e21]
+        - img [ref=e24]
+        - combobox "테마 선택" [ref=e26]:
+          - option "자동"
+          - option "라이트"
+          - option "다크" [selected]
+  - main [ref=e27]:
+    - generic [ref=e28]:
+      - generic [ref=e29]:
+        - paragraph [ref=e30]: CITY WALK INTELLIGENCE · 천호 생활권
+        - heading "가장 빠른 길보다, 무사히 돌아가는 길." [level=1] [ref=e31]
+        - paragraph [ref=e32]: 보행망과 등록 안전시설을 비교해 오늘의 귀갓길을 선택하세요.
+      - complementary [ref=e33]:
+        - generic [ref=e34]: i
+        - generic [ref=e35]: 공개자료 기반 참고 정보입니다. 시설 작동·점등과 현장 안전은 실시간 확인되지 않습니다.
+    - status [ref=e36]: 실제 보행망을 불러오는 중…
+    - region "귀로 경로 찾기" [ref=e38]:
+      - complementary [ref=e39]:
+        - button "경로 설정 열기" [ref=e40] [cursor=pointer]:
+          - generic [ref=e42]: 경로 설정 열기
+        - generic [ref=e43]:
+          - generic [ref=e44]:
+            - paragraph [ref=e45]: PLAN YOUR RETURN
+            - heading "경로 설정" [level=2] [ref=e46]
+          - generic [ref=e47]: 실제 보행망
+      - region "실제 보행 경로 지도" [ref=e49]:
+        - generic [ref=e50]:
+          - generic [ref=e51]:
+            - paragraph [ref=e52]: 천호 · 성내 일대
+            - heading "실제 보행 경로" [level=2] [ref=e53]: 실제 보행 경로
+          - button "경로 전체" [ref=e54] [cursor=pointer]:
+            - img [ref=e55]
+            - generic [ref=e57]: 경로 전체
+        - generic "지도 표시 항목" [ref=e58]:
+          - generic [ref=e59]: 선택 경로
+          - generic [ref=e61]: 최단 경로
+          - generic [ref=e63]: 공개 보행 링크
+          - generic [ref=e65] [cursor=pointer]:
+            - checkbox "보안등" [ref=e66]
+            - text: 보안등
+          - generic [ref=e68] [cursor=pointer]:
+            - checkbox "CCTV·안심벨" [checked] [ref=e69]
+            - text: CCTV·안심벨
+        - generic "천호동 보행망과 안전시설 지도" [ref=e71]
+        - generic [ref=e72]:
+          - generic [ref=e73]: ⌖
+          - generic [ref=e74]: 회색 선은 경로 계산에 쓰는 공개 보행 링크예요. 지도 타일에 보이지 않는 골목·통로가 포함될 수 있어 현장 확인이 필요합니다.
+    - region "경로 비교 결과"
+    - paragraph
+    - generic [ref=e75]:
+      - generic [ref=e76]:
+        - paragraph [ref=e77]: A ROUTE THAT FEELS RIGHT
+        - heading "내 취향을 반영해볼까요?" [level=2] [ref=e78]
+        - paragraph [ref=e79]: 여러 출발·도착 경로 중 선호하는 길을 고르면 다음 추천에 반영할 수 있어요.
+        - paragraph [ref=e80]: 선택 0개
+        - button "선택으로 추천 기준 학습" [disabled] [ref=e81]
+        - button "선택 기록 초기화" [ref=e82] [cursor=pointer]
+        - paragraph [ref=e83]: 기록은 현재 탭에만 저장되며 새로고침하면 사라져요. 안전성을 예측하거나 보장하는 기능은 아닙니다.
+      - paragraph [ref=e85]: 실제 경로를 먼저 비교해 주세요.
+    - region "계정과 보행 환경 제보" [ref=e86]:
+      - generic [ref=e87]:
+        - generic [ref=e88]:
+          - paragraph [ref=e89]: ACCOUNT / COMMUNITY
+          - heading "계정과 보행 환경 제보" [level=2] [ref=e90]
+          - paragraph [ref=e91]: 즐겨찾기와 제보 내역은 로그인한 본인 계정에서만 확인할 수 있어요.
+        - status [ref=e92]: Supabase 연결을 확인하고 있어요.
+      - paragraph [ref=e93]
+      - paragraph [ref=e94]:
+        - text: "초기 설정: Supabase SQL Editor에서"
+        - code [ref=e95]: supabase/schema.sql
+        - text: 을 실행해 테이블과 개인별 접근 정책을 준비해 주세요.
+        - code [ref=e96]: service_role
+        - text: 키는 사용하지 않습니다.
+    - group [ref=e97]:
+      - generic "ABOUT THE DATA 사용한 데이터와 경로 계산 방식" [ref=e98] [cursor=pointer]:
+        - generic [ref=e99]:
+          - generic [ref=e100]: ABOUT THE DATA
+          - strong [ref=e101]: 사용한 데이터와 경로 계산 방식
+        - generic [ref=e102]: ＋
+    - generic [ref=e103]:
+      - generic [ref=e104]: 귀로 歸路
+      - generic [ref=e105]: 가장 빠른 길보다, 무사히 돌아가는 길. · 공개자료 기반 참고 정보

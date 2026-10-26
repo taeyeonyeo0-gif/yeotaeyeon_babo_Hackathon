@@ -1,0 +1,128 @@
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - link "안심보행맵 처음으로" [ref=e3] [cursor=pointer]:
+      - /url: "#top"
+      - generic [ref=e5]:
+        - strong [ref=e6]: 안심보행맵
+        - generic [ref=e7]: Safe Walk Map
+        - generic [ref=e8]: 더 안심되는 길을, 데이터로 찾다.
+    - navigation "주요 메뉴" [ref=e9]:
+      - link "경로 탐색" [ref=e10] [cursor=pointer]:
+        - /url: "#panel-route"
+      - link "경로 비교" [ref=e11] [cursor=pointer]:
+        - /url: "#panel-route"
+      - link "내 기록·제보" [ref=e12] [cursor=pointer]:
+        - /url: "#panel-account"
+      - link "데이터" [ref=e13] [cursor=pointer]:
+        - /url: "#panel-data"
+    - generic [ref=e14]:
+      - button "로그인" [ref=e15] [cursor=pointer]:
+        - generic [ref=e16]: 로그인
+      - generic [ref=e17]:
+        - img [ref=e18]
+        - generic "현재 적용된 밤 테마" [ref=e20]: "적용 중: 밤"
+        - combobox "테마 선택 모드" [ref=e21]:
+          - option "자동" [selected]
+          - option "낮"
+          - option "밤"
+  - main [ref=e22]:
+    - region "안심보행맵 경로 찾기" [ref=e23]:
+      - complementary [ref=e24]:
+        - tablist "지도 작업 선택" [ref=e25]:
+          - tab "경로 설정" [selected] [ref=e26] [cursor=pointer]
+          - tab "내 취향" [ref=e27] [cursor=pointer]
+          - tab "계정·제보" [ref=e28] [cursor=pointer]
+          - tab "데이터" [ref=e29] [cursor=pointer]
+        - tabpanel "경로 설정" [ref=e31]:
+          - generic [ref=e32]:
+            - generic [ref=e33]:
+              - paragraph [ref=e34]: PLAN YOUR RETURN
+              - heading "경로 설정" [level=2] [ref=e35]
+            - generic [ref=e36]: 실제 보행망
+          - status [ref=e38]: 실제 보행망을 불러오는 중…
+          - generic [ref=e40]:
+            - generic [ref=e41]:
+              - generic [ref=e42]: 출발 장소
+              - combobox "출발 장소" [ref=e45]: 천호역 2번 출구
+              - generic [ref=e46]:
+                - button "지도에서 출발 선택" [ref=e47] [cursor=pointer]:
+                  - generic [ref=e48]: ＋
+                  - text: 지도에서 출발 선택
+                - button "내 위치" [ref=e49] [cursor=pointer]:
+                  - generic [ref=e50]: ◎
+                  - text: 내 위치
+            - button "출발지와 도착지 바꾸기" [ref=e51] [cursor=pointer]:
+              - img [ref=e52]
+              - generic [ref=e54]: 출발·도착 바꾸기
+            - generic [ref=e55]:
+              - generic [ref=e56]: 도착 장소
+              - combobox "도착 장소" [ref=e59]: 강동경찰서 천호지구대 · 구천면로 141
+              - button "지도에서 도착 선택" [ref=e60] [cursor=pointer]:
+                - generic [ref=e61]: ＋
+                - text: 지도에서 도착 선택
+            - paragraph [ref=e62]: 출발 장소에서 공개 보행망 접점까지 7m · 도착 장소에서 공개 보행망 접점까지 6m · 접점 사이만 안내
+            - button "경로 비교하기" [disabled] [ref=e63]:
+              - generic [ref=e64]: 경로 비교하기
+              - img [ref=e65]
+            - generic [ref=e67]:
+              - generic [ref=e68]:
+                - generic [ref=e69]: 추가로 걸을 수 있는 시간
+                - generic [ref=e70]: 5분
+              - slider "추가로 걸을 수 있는 시간" [ref=e71] [cursor=pointer]: "5"
+              - generic [ref=e72]: 걷는 속도
+              - combobox "걷는 속도" [ref=e73]:
+                - option "천천히 · 60m/분"
+                - option "보통 · 80m/분" [selected]
+                - option "빠르게 · 100m/분"
+              - group [ref=e74]:
+                - generic "추천 기준 조정" [ref=e75] [cursor=pointer]
+            - paragraph [ref=e76]:
+              - img [ref=e77]
+              - text: 현재 위치는 직접 요청할 때만 사용돼요.
+          - region "경로 비교 결과"
+          - paragraph
+          - complementary [ref=e80]:
+            - generic [ref=e81]: i
+            - generic [ref=e82]: 공개자료 기반 참고 정보입니다. 시설 작동·점등과 현장 안전은 실시간 확인되지 않습니다.
+      - region "실제 보행 경로 지도" [ref=e83]:
+        - generic [ref=e84]:
+          - generic [ref=e85]:
+            - paragraph [ref=e86]: 천호 · 성내 일대
+            - heading "실제 보행 경로 보행 링크 2,079개" [level=2] [ref=e87]:
+              - text: 실제 보행 경로
+              - generic [ref=e88]: 보행 링크 2,079개
+          - button "경로 전체" [ref=e89] [cursor=pointer]:
+            - img [ref=e90]
+            - generic [ref=e92]: 경로 전체
+        - generic "지도 표시 항목" [ref=e93]:
+          - generic [ref=e94]: 선택 경로
+          - generic [ref=e96]: 최단 경로
+          - generic [ref=e98]: 공개 보행 링크
+          - generic [ref=e101] [cursor=pointer]:
+            - checkbox "보안등" [ref=e102]
+            - text: 보안등
+          - generic [ref=e104] [cursor=pointer]:
+            - checkbox "CCTV·안심벨" [checked] [ref=e105]
+            - text: CCTV·안심벨
+        - generic "천호동 보행망과 안전시설 지도" [ref=e107]:
+          - generic:
+            - generic:
+              - button "출" [ref=e109] [cursor=pointer]
+              - button "도" [ref=e110] [cursor=pointer]
+          - generic:
+            - generic [ref=e111]:
+              - button "Zoom in" [ref=e112] [cursor=pointer]: +
+              - button "Zoom out" [ref=e113] [cursor=pointer]: −
+            - generic [ref=e115]: 300 m
+            - generic [ref=e116]:
+              - link "Leaflet" [ref=e117] [cursor=pointer]:
+                - /url: https://leafletjs.com
+                - img [ref=e118]
+                - text: Leaflet
+              - text: "| ©"
+              - link "OpenStreetMap" [ref=e122] [cursor=pointer]:
+                - /url: https://www.openstreetmap.org/copyright
+              - text: contributors
+        - generic [ref=e123]:
+          - generic [ref=e124]: ⌖
+          - generic [ref=e125]: 회색 선은 경로 계산에 쓰는 공개 보행 링크예요. 지도 타일에 보이지 않는 골목·통로가 포함될 수 있어 현장 확인이 필요합니다.

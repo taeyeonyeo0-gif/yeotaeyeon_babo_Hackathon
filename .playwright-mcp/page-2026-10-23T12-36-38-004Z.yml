@@ -1,0 +1,52 @@
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - link "귀로 처음으로" [ref=e3] [cursor=pointer]:
+      - /url: "#top"
+      - img [ref=e5]
+      - generic [ref=e9]:
+        - strong [ref=e10]: 귀로
+        - generic [ref=e11]: 歸路
+    - navigation "주요 메뉴" [ref=e12]:
+      - link "경로 탐색" [ref=e13] [cursor=pointer]:
+        - /url: "#panel-route"
+      - link "경로 비교" [ref=e14] [cursor=pointer]:
+        - /url: "#panel-route"
+      - link "내 기록·제보" [ref=e15] [cursor=pointer]:
+        - /url: "#panel-account"
+      - link "데이터" [ref=e16] [cursor=pointer]:
+        - /url: "#panel-data"
+    - generic [ref=e17]:
+      - link "로그인" [ref=e18] [cursor=pointer]:
+        - /url: "#panel-account"
+        - generic [ref=e19]: 로그인
+      - combobox "테마 선택" [ref=e21]:
+        - option "자동" [selected]
+        - option "라이트"
+        - option "다크"
+  - main [ref=e22]:
+    - region "귀로 경로 찾기" [ref=e23]:
+      - complementary [ref=e24]:
+        - button "탭 패널 열기" [ref=e25] [cursor=pointer]:
+          - generic [ref=e27]: 탭 패널 열기
+      - region "실제 보행 경로 지도" [ref=e28]:
+        - generic [ref=e29]:
+          - generic [ref=e30]:
+            - paragraph [ref=e31]: 천호 · 성내 일대
+            - heading "실제 보행 경로" [level=2] [ref=e32]: 실제 보행 경로
+          - button "경로 전체" [ref=e33] [cursor=pointer]:
+            - img [ref=e34]
+            - generic [ref=e36]: 경로 전체
+        - generic "지도 표시 항목" [ref=e37]:
+          - generic [ref=e38]: 선택 경로
+          - generic [ref=e40]: 최단 경로
+          - generic [ref=e42]: 공개 보행 링크
+          - generic [ref=e44] [cursor=pointer]:
+            - checkbox "보안등" [ref=e45]
+            - text: 보안등
+          - generic [ref=e47] [cursor=pointer]:
+            - checkbox "CCTV·안심벨" [checked] [ref=e48]
+            - text: CCTV·안심벨
+        - generic "천호동 보행망과 안전시설 지도" [ref=e50]
+        - generic [ref=e51]:
+          - generic [ref=e52]: ⌖
+          - generic [ref=e53]: 회색 선은 경로 계산에 쓰는 공개 보행 링크예요. 지도 타일에 보이지 않는 골목·통로가 포함될 수 있어 현장 확인이 필요합니다.
