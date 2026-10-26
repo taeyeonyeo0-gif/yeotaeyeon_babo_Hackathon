@@ -1,0 +1,31 @@
+{
+  "format": "byte-exact-file-parts-v1",
+  "source_filename": "south-korea-261025.osm.pbf",
+  "source_size_bytes": 290087135,
+  "source_sha256": "395e4e7cdbad3eea862227cb6290433efef274959a6deaf7f15916d17f2f2b2b",
+  "max_part_size_bytes": 94371840,
+  "part_count": 4,
+  "parts": [
+    {
+      "name": "south-korea-261025.osm.pbf.part001",
+      "size_bytes": 94371840,
+      "sha256": "634fd33aaa890c2b58c16eb66b138ddfbe2c3e50f50b88661fc14af7b1c64490"
+    },
+    {
+      "name": "south-korea-261025.osm.pbf.part002",
+      "size_bytes": 94371840,
+      "sha256": "f5052568b71046fc177d8ddcba29945f1a659d4c88132394398e9305bbe92253"
+    },
+    {
+      "name": "south-korea-261025.osm.pbf.part003",
+      "size_bytes": 94371840,
+      "sha256": "c861ed7b71ecd78ac95ad54f090157b66f3cfd5da42921b31635a88dd1b061f6"
+    },
+    {
+      "name": "south-korea-261025.osm.pbf.part004",
+      "size_bytes": 6971615,
+      "sha256": "007969499455e525a2c48829f3e68b8a216c9587371a8159537953c0e27673e4"
+    }
+  ],
+  "important_note": "These are raw byte chunks, not independently parseable PBF files. Concatenate all chunks in listed order to reconstruct the exact original file."
+}
