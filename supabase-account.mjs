@@ -58,8 +58,29 @@ function favoritePayload(route) {
 }
 
 const duplicateError = error => error?.code === '23505';
-const validFavoriteId = id => (typeof id === 'string' && id.trim().length > 0)
+const validRowId = id => (typeof id === 'string' && id.trim().length > 0)
   || (typeof id === 'number' && Number.isSafeInteger(id) && id > 0);
+const foldSearchValue = value => String(value ?? '').toLocaleLowerCase('ko-KR');
+
+export function filterFavorites(rows, query) {
+  const term = foldSearchValue(query).trim();
+  if (!term) return rows;
+  return rows.filter(row => `${row.start_name ?? ''} ${row.end_name ?? ''}`.toLocaleLowerCase('ko-KR').includes(term));
+}
+
+export function filterReports(rows, query, labels = {}) {
+  const term = foldSearchValue(query).trim();
+  if (!term) return rows;
+  return rows.filter(row => [
+    row.report_type,
+    labels.reportTypes?.[row.report_type],
+    row.description,
+    row.latitude,
+    row.longitude,
+    row.status,
+    labels.reportStatuses?.[row.status],
+  ].some(value => foldSearchValue(value).includes(term)));
+}
 
 export async function listFavorites(client, userId) {
   requireUser(userId);
@@ -101,7 +122,7 @@ export async function saveFavorite(client, userId, route) {
 
 export async function updateFavorite(client, userId, favoriteId, route) {
   const ownerId = await requireAuthenticatedOwner(client, userId);
-  if (!validFavoriteId(favoriteId)) throw Error('수정할 즐겨찾기를 찾지 못했어요.');
+  if (!validRowId(favoriteId)) throw Error('수정할 즐겨찾기를 찾지 못했어요.');
   const payload = favoritePayload(route);
   const { data: existing, error: lookupError } = await client.from('favorites')
     .select('id')
@@ -125,7 +146,7 @@ export async function updateFavorite(client, userId, favoriteId, route) {
 
 export async function deleteFavorite(client, userId, favoriteId) {
   const ownerId = await requireAuthenticatedOwner(client, userId);
-  if (!validFavoriteId(favoriteId)) throw Error('삭제할 즐겨찾기를 찾지 못했어요.');
+  if (!validRowId(favoriteId)) throw Error('삭제할 즐겨찾기를 찾지 못했어요.');
   const { data, error } = await client.from('favorites')
     .delete()
     .eq('id', favoriteId)
@@ -136,8 +157,7 @@ export async function deleteFavorite(client, userId, favoriteId) {
   return { status: 'deleted' };
 }
 
-export async function submitReport(client, userId, values) {
-  const ownerId = await requireAuthenticatedOwner(client, userId);
+function reportPayload(values) {
   const reportType = values?.reportType;
   const latitudeText = String(values?.latitude ?? '').trim();
   const longitudeText = String(values?.longitude ?? '').trim();
@@ -147,9 +167,41 @@ export async function submitReport(client, userId, values) {
   if (!reportTypes.has(reportType) || !latitudeText || !longitudeText || !Number.isFinite(latitude) || latitude < -90 || latitude > 90 || !Number.isFinite(longitude) || longitude < -180 || longitude > 180 || description.length < 5 || description.length > 1000) {
     throw Error('유형, 유효한 위도·경도, 5~1000자 설명을 확인해 주세요.');
   }
-  const payload = { user_id: ownerId, report_type: reportType, latitude, longitude, description };
+  return { report_type: reportType, latitude, longitude, description };
+}
+
+export async function submitReport(client, userId, values) {
+  const ownerId = await requireAuthenticatedOwner(client, userId);
+  const payload = { ...reportPayload(values), user_id: ownerId };
   const { data, error } = await client.from('reports').insert(payload).select('id').single();
   if (error) throw error;
   if (!data?.id) throw Error('제보 저장 결과를 확인하지 못했어요.');
   return { id: data.id };
+}
+
+
+export async function updateReport(client, userId, reportId, values) {
+  const ownerId = await requireAuthenticatedOwner(client, userId);
+  if (!validRowId(reportId)) throw Error('수정할 제보를 찾지 못했어요.');
+  const { data, error } = await client.from('reports')
+    .update(reportPayload(values))
+    .eq('id', reportId)
+    .eq('user_id', ownerId)
+    .select('id');
+  if (error) throw error;
+  if (!data?.length) return { status: 'not-found' };
+  return { status: 'updated' };
+}
+
+export async function deleteReport(client, userId, reportId) {
+  const ownerId = await requireAuthenticatedOwner(client, userId);
+  if (!validRowId(reportId)) throw Error('삭제할 제보를 찾지 못했어요.');
+  const { data, error } = await client.from('reports')
+    .delete()
+    .eq('id', reportId)
+    .eq('user_id', ownerId)
+    .select('id');
+  if (error) throw error;
+  if (!data?.length) return { status: 'not-found' };
+  return { status: 'deleted' };
 }

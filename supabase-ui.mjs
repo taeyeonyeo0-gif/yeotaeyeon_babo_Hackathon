@@ -1,6 +1,6 @@
 import { supabase, supabaseConfigured } from './supabase-client.mjs';
 import { avatarExtensions, isValidAvatarFileHeader, userAvatarPath } from './avatar-utils.mjs';
-import { deleteFavorite, listFavorites, listReports, saveFavorite, submitReport, supabaseErrorDiagnostic, updateFavorite } from './supabase-account.mjs';
+import { deleteFavorite, deleteReport, filterFavorites, filterReports, listFavorites, listReports, saveFavorite, submitReport, supabaseErrorDiagnostic, updateFavorite, updateReport } from './supabase-account.mjs';
 
 const $ = selector => document.querySelector(selector);
 const avatarPathFor = userAvatarPath;
@@ -175,26 +175,72 @@ export async function initializeSupabaseUI({ getCurrentRoute, onLoadFavorite, on
   let currentAvatarPath = null;
   let hasSessionState = false;
   let dataRequest = 0;
+  let favoriteRows = [];
+  let reportRows = [];
+  let favoriteSearch = '';
+  let reportSearch = '';
+  let editingReportId = null;
+  let editingReportOwnerId = null;
+  const reportEditDialog = $('#report-edit-dialog');
 
   function clearPrivateLists() {
+    favoriteRows = [];
+    reportRows = [];
+    favoriteSearch = '';
+    reportSearch = '';
+    for (const selector of ['#favorites-search', '#reports-search']) {
+      const input = $(selector);
+      if (input) input.value = '';
+    }
+    for (const selector of ['#favorites-search-clear', '#reports-search-clear']) {
+      const button = $(selector);
+      if (button) button.hidden = true;
+    }
+    for (const [buttonSelector, contentSelector] of [['#favorites-collapse', '#favorites-content'], ['#reports-collapse', '#reports-content']]) {
+      const button = $(buttonSelector);
+      const content = $(contentSelector);
+      if (button && content) {
+        button.setAttribute('aria-expanded', 'true');
+        button.textContent = '접기';
+        content.hidden = false;
+      }
+    }
+    if ($('#favorite-count')) $('#favorite-count').textContent = '0';
+    if ($('#report-count')) $('#report-count').textContent = '0';
     $('#favorite-list').replaceChildren();
     $('#reports-list').replaceChildren();
     showMessage('#favorite-status', '');
+    showMessage('#favorite-list-status', '');
     showMessage('#report-message', '');
+    showMessage('#report-submit-message', '');
+    if (reportEditDialog?.open) reportEditDialog.close();
+    editingReportId = null;
+    editingReportOwnerId = null;
   }
 
   function renderFavorites(rows) {
+    favoriteRows = rows;
+    const count = $('#favorite-count');
+    if (count) count.textContent = String(favoriteRows.length);
+    const visibleRows = filterFavorites(favoriteRows, favoriteSearch);
     const list = $('#favorite-list');
     list.replaceChildren();
-    if (!rows.length) {
+    if (!favoriteRows.length) {
       const empty = document.createElement('li');
       empty.className = 'cloud-empty';
       empty.textContent = '저장된 경로가 없습니다.';
       list.append(empty);
       return;
     }
+    if (!visibleRows.length) {
+      const empty = document.createElement('li');
+      empty.className = 'cloud-empty';
+      empty.textContent = '검색 결과가 없습니다.';
+      list.append(empty);
+      return;
+    }
 
-    for (const row of rows) {
+    for (const row of visibleRows) {
       const item = document.createElement('li');
       item.className = 'cloud-record';
       const details = document.createElement('div');
@@ -272,17 +318,28 @@ export async function initializeSupabaseUI({ getCurrentRoute, onLoadFavorite, on
   }
 
   function renderReports(rows) {
+    reportRows = rows;
+    const count = $('#report-count');
+    if (count) count.textContent = String(reportRows.length);
+    const visibleRows = filterReports(reportRows, reportSearch, { reportTypes: reportTypeNames, reportStatuses: reportStatusNames });
     const list = $('#reports-list');
     list.replaceChildren();
-    if (!rows.length) {
+    if (!reportRows.length) {
       const empty = document.createElement('li');
       empty.className = 'cloud-empty';
       empty.textContent = '등록한 제보가 없습니다.';
       list.append(empty);
       return;
     }
+    if (!visibleRows.length) {
+      const empty = document.createElement('li');
+      empty.className = 'cloud-empty';
+      empty.textContent = '검색 결과가 없습니다.';
+      list.append(empty);
+      return;
+    }
 
-    for (const row of rows) {
+    for (const row of visibleRows) {
       const item = document.createElement('li');
       item.className = 'cloud-record report-record';
       const details = document.createElement('div');
@@ -297,22 +354,159 @@ export async function initializeSupabaseUI({ getCurrentRoute, onLoadFavorite, on
       const location = document.createElement('small');
       location.textContent = `${Number(row.latitude).toFixed(5)}, ${Number(row.longitude).toFixed(5)} · ${new Date(row.created_at).toLocaleString('ko-KR')}`;
       details.append(title, state, description, location);
-      item.append(details);
+      const actions = document.createElement('div');
+      actions.className = 'report-actions';
+      actions.append(makeButton('수정', 'cloud-secondary', () => openReportEditor(row)));
+      actions.append(makeButton('삭제', 'cloud-secondary cloud-delete', async event => {
+        const ownerId = currentUserId;
+        if (!ownerId || !currentSession?.user) {
+          showMessage('#report-submit-message', '로그인 후 제보를 관리할 수 있어요.', true);
+          return;
+        }
+        const summary = `${reportTypeNames[row.report_type] || row.report_type}\n${Number(row.latitude).toFixed(5)}, ${Number(row.longitude).toFixed(5)}\n${String(row.description).slice(0, 100)}`;
+        if (!window.confirm(`${summary}\n\n이 제보를 삭제할까요?`)) return;
+        const button = event.currentTarget;
+        button.disabled = true;
+        showMessage('#report-submit-message', '제보를 삭제하는 중…');
+        try {
+          const result = await deleteReport(supabase, ownerId, row.id);
+          if (currentUserId !== ownerId) return;
+          if (result.status === 'not-found') {
+            showMessage('#report-submit-message', '삭제할 제보를 찾지 못했어요.', true);
+            return;
+          }
+          await loadAccountData(ownerId);
+          if (currentUserId === ownerId) showMessage('#report-submit-message', '제보를 삭제했습니다.');
+        } catch (error) {
+          if (currentUserId === ownerId) showMessage('#report-submit-message', dataErrorMessage(error), true);
+        } finally {
+          button.disabled = false;
+        }
+      }));
+      item.append(details, actions);
       list.append(item);
     }
+  }
+
+  function clearReportEditor() {
+    $('#report-edit-form')?.reset();
+    showMessage('#report-edit-message', '');
+    editingReportId = null;
+    editingReportOwnerId = null;
+  }
+
+  function closeReportEditor() {
+    if (reportEditDialog?.open) reportEditDialog.close();
+    else clearReportEditor();
+  }
+
+  function openReportEditor(row) {
+    if (!currentSession?.user || !currentUserId || !reportEditDialog) {
+      showMessage('#report-submit-message', '로그인 후 제보를 수정할 수 있어요.', true);
+      return;
+    }
+    editingReportId = row.id;
+    editingReportOwnerId = currentUserId;
+    $('#report-edit-type').value = row.report_type;
+    $('#report-edit-latitude').value = String(row.latitude);
+    $('#report-edit-longitude').value = String(row.longitude);
+    $('#report-edit-description').value = row.description;
+    showMessage('#report-edit-message', '');
+    reportEditDialog.showModal();
+  }
+
+  $('#report-edit-close')?.addEventListener('click', closeReportEditor);
+  $('#report-edit-cancel')?.addEventListener('click', closeReportEditor);
+  reportEditDialog?.addEventListener('close', clearReportEditor);
+  reportEditDialog?.addEventListener('click', event => {
+    if (event.target === reportEditDialog) closeReportEditor();
+  });
+  $('#report-edit-form')?.addEventListener('submit', async event => {
+    event.preventDefault();
+    const ownerId = editingReportOwnerId;
+    const reportId = editingReportId;
+    if (!ownerId || !reportId || !currentSession?.user || currentUserId !== ownerId) {
+      showMessage('#report-edit-message', '로그인 세션을 확인한 뒤 다시 시도해 주세요.', true);
+      return;
+    }
+    const save = $('#report-edit-save');
+    const cancel = $('#report-edit-cancel');
+    save.disabled = true;
+    cancel.disabled = true;
+    showMessage('#report-edit-message', '제보를 저장하는 중…');
+    try {
+      const result = await updateReport(supabase, ownerId, reportId, {
+        reportType: $('#report-edit-type').value,
+        latitude: $('#report-edit-latitude').value,
+        longitude: $('#report-edit-longitude').value,
+        description: $('#report-edit-description').value,
+      });
+      if (currentUserId !== ownerId) return;
+      if (result.status === 'not-found') {
+        showMessage('#report-edit-message', '수정할 제보를 찾지 못했어요.', true);
+        return;
+      }
+      closeReportEditor();
+      await loadAccountData(ownerId);
+      if (currentUserId === ownerId) showMessage('#report-submit-message', '제보를 수정했습니다.');
+    } catch (error) {
+      if (currentUserId === ownerId) showMessage('#report-edit-message', dataErrorMessage(error), true);
+    } finally {
+      save.disabled = false;
+      cancel.disabled = false;
+    }
+  });
+
+  const favoriteSearchInput = $('#favorites-search');
+  const favoriteSearchClear = $('#favorites-search-clear');
+  const reportSearchInput = $('#reports-search');
+  const reportSearchClear = $('#reports-search-clear');
+  favoriteSearchInput?.addEventListener('input', () => {
+    favoriteSearch = favoriteSearchInput.value;
+    if (favoriteSearchClear) favoriteSearchClear.hidden = !favoriteSearch.trim();
+    renderFavorites(favoriteRows);
+  });
+  favoriteSearchClear?.addEventListener('click', () => {
+    favoriteSearch = '';
+    if (favoriteSearchInput) favoriteSearchInput.value = '';
+    favoriteSearchClear.hidden = true;
+    renderFavorites(favoriteRows);
+    favoriteSearchInput?.focus();
+  });
+  reportSearchInput?.addEventListener('input', () => {
+    reportSearch = reportSearchInput.value;
+    if (reportSearchClear) reportSearchClear.hidden = !reportSearch.trim();
+    renderReports(reportRows);
+  });
+  reportSearchClear?.addEventListener('click', () => {
+    reportSearch = '';
+    if (reportSearchInput) reportSearchInput.value = '';
+    reportSearchClear.hidden = true;
+    renderReports(reportRows);
+    reportSearchInput?.focus();
+  });
+  for (const [buttonSelector, contentSelector] of [['#favorites-collapse', '#favorites-content'], ['#reports-collapse', '#reports-content']]) {
+    const button = $(buttonSelector);
+    const content = $(contentSelector);
+    if (button && content) button.addEventListener('click', () => {
+      const expanded = button.getAttribute('aria-expanded') === 'true';
+      button.setAttribute('aria-expanded', String(!expanded));
+      content.hidden = expanded;
+      button.textContent = expanded ? '펼치기' : '접기';
+    });
   }
 
   async function loadAccountData(userId) {
     const request = ++dataRequest;
     if (!userId) return;
-    showMessage('#favorite-status', '즐겨찾기를 불러오는 중…');
+    showMessage('#favorite-list-status', '즐겨찾기를 불러오는 중…');
     showMessage('#report-message', '제보 내역을 불러오는 중…');
     const [favorites, reports] = await Promise.allSettled([listFavorites(supabase, userId), listReports(supabase, userId)]);
     if (request !== dataRequest || currentUserId !== userId) return;
-    if (favorites.status === 'rejected') showMessage('#favorite-status', dataErrorMessage(favorites.reason), true);
+    if (favorites.status === 'rejected') showMessage('#favorite-list-status', dataErrorMessage(favorites.reason), true);
     else {
       renderFavorites(favorites.value);
-      showMessage('#favorite-status', `${favorites.value.length}개 경로`);
+      showMessage('#favorite-list-status', `${favorites.value.length}개 경로`);
     }
     if (reports.status === 'rejected') showMessage('#report-message', dataErrorMessage(reports.reason), true);
     else {
@@ -686,21 +880,21 @@ export async function initializeSupabaseUI({ getCurrentRoute, onLoadFavorite, on
   $('#report-form').addEventListener('submit', async event => {
     event.preventDefault();
     if (!currentSession?.user) {
-      showMessage('#report-message', '로그인 후 제보를 등록할 수 있어요.', true);
+      showMessage('#report-submit-message', '로그인 후 제보를 등록할 수 있어요.', true);
       return;
     }
     const reportInput={reportType:$('#report-type').value,latitude:$('#report-latitude').value,longitude:$('#report-longitude').value,description:$('#report-description').value};
     const ownerId = currentUserId;
     $('#submit-report').disabled = true;
-    showMessage('#report-message', '제보 등록 중…');
+    showMessage('#report-submit-message', '제보 등록 중…');
     try {
       await submitReport(supabase, ownerId, reportInput);
       if (currentUserId !== ownerId) return;
       $('#report-form').reset();
-      showMessage('#report-message', '제보를 등록했습니다. 처리 상태는 아래 목록에서 확인할 수 있어요.');
+      showMessage('#report-submit-message', '제보를 등록했습니다. 처리 상태는 아래 목록에서 확인할 수 있어요.');
       await loadAccountData(ownerId);
     } catch (error) {
-      if (currentUserId === ownerId) showMessage('#report-message', dataErrorMessage(error), true);
+      if (currentUserId === ownerId) showMessage('#report-submit-message', dataErrorMessage(error), true);
     } finally {
       $('#submit-report').disabled = false;
     }

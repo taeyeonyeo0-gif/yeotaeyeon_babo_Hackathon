@@ -3,11 +3,15 @@ import { readFileSync } from 'node:fs';
 import test from 'node:test';
 import {
   deleteFavorite,
+  deleteReport,
+  filterFavorites,
+  filterReports,
   listFavorites,
   listReports,
   saveFavorite,
   submitReport,
   supabaseErrorDiagnostic,
+  updateReport,
   updateFavorite,
 } from '../supabase-account.mjs';
 
@@ -69,10 +73,15 @@ class FakeQuery {
     }
 
     if (this.action === 'update') {
-      if (this.table !== 'favorites' || Object.keys(this.payload).some(key => !['start_name', 'end_name'].includes(key))) {
+      const allowed = this.table === 'favorites'
+        ? ['start_name', 'end_name']
+        : this.table === 'reports'
+          ? ['report_type', 'latitude', 'longitude', 'description']
+          : [];
+      if (!allowed.length || Object.keys(this.payload).some(key => !allowed.includes(key))) {
         return { data: null, error: { code: '42501', message: 'update not allowed' } };
       }
-      if (visible.some(row => rows.some(other => other.user_id === userId && other.id !== row.id && other.start_name === this.payload.start_name && other.end_name === this.payload.end_name))) {
+      if (this.table === 'favorites' && visible.some(row => rows.some(other => other.user_id === userId && other.id !== row.id && other.start_name === this.payload.start_name && other.end_name === this.payload.end_name))) {
         return { data: null, error: { code: '23505', message: 'duplicate favorite' } };
       }
       for (const row of visible) Object.assign(row, this.payload);
@@ -132,6 +141,51 @@ test('report validation, owner scoping and status defaults are enforced by the c
   await assert.rejects(submitReport(alice, 'alice', { ...validReport, reportType: 'made-up' }), /유형/);
 });
 
+test('favorite and report searches filter only visible rows without changing their source arrays', () => {
+  const favorites = [
+    { id: 1, start_name: 'Cheonho Station', end_name: 'Riverside Park' },
+    { id: 2, start_name: '강동역', end_name: '천호공원' },
+  ];
+  assert.deepEqual(filterFavorites(favorites, 'CHEONHO').map(row => row.id), [1]);
+  assert.deepEqual(filterFavorites(favorites, '천호공원').map(row => row.id), [2]);
+  assert.deepEqual(filterFavorites(favorites, '').map(row => row.id), [1, 2]);
+  assert.equal(favorites.length, 2);
+
+  const reports = [
+    { id: 1, report_type: 'streetlight', latitude: 37.54, longitude: 127.12, description: '램프 고장', status: 'pending' },
+    { id: 2, report_type: 'sidewalk', latitude: 37.55, longitude: 127.13, description: '보도블록 파손', status: 'resolved' },
+  ];
+  const labels = { reportTypes: { streetlight: '가로등 고장', sidewalk: '보행로 파손' }, reportStatuses: { pending: '접수', resolved: '처리 완료' } };
+  assert.deepEqual(filterReports(reports, '가로등', labels).map(row => row.id), [1]);
+  assert.deepEqual(filterReports(reports, '127.13', labels).map(row => row.id), [2]);
+  assert.deepEqual(filterReports(reports, '처리 완료', labels).map(row => row.id), [2]);
+  assert.deepEqual(filterReports(reports, '없는 내용', labels), []);
+  assert.equal(reports.length, 2);
+});
+
+test('own reports update editable fields only and delete by ID', async () => {
+  const { db, client } = fakeDb();
+  const alice = client('alice');
+  const bob = client('bob');
+  const created = await submitReport(alice, 'alice', validReport);
+  const updated = await updateReport(alice, 'alice', created.id, {
+    reportType: 'crossing', latitude: '37.541', longitude: '127.121', description: '횡단보도 신호등 고장',
+    user_id: 'bob', status: 'resolved', id: 'forged-id', created_at: 'forged-date',
+  });
+  assert.equal(updated.status, 'updated');
+  const [row] = await listReports(alice, 'alice');
+  assert.equal(row.report_type, 'crossing');
+  assert.equal(row.latitude, 37.541);
+  assert.equal(row.longitude, 127.121);
+  assert.equal(row.description, '횡단보도 신호등 고장');
+  assert.equal(row.user_id, 'alice');
+  assert.equal(row.status, 'pending');
+  assert.equal((await updateReport(bob, 'bob', created.id, validReport)).status, 'not-found');
+  assert.equal((await deleteReport(bob, 'bob', created.id)).status, 'not-found');
+  assert.equal((await deleteReport(alice, 'alice', created.id)).status, 'deleted');
+  assert.equal((await listReports(alice, 'alice')).length, 0);
+});
+
 test('failed writes propagate errors rather than reporting success', async () => {
   const { db, client } = fakeDb();
   const alice = client('alice');
@@ -157,7 +211,10 @@ test('local SQL keeps favorites owner-scoped and reports status read-only', () =
   assert.match(schema, /grant update \(start_name, end_name\) on table public\.favorites to authenticated/);
   assert.match(schema, /create policy favorites_update_own on public\.favorites[\s\S]*?using \(auth\.uid\(\) = user_id\)[\s\S]*?with check \(auth\.uid\(\) = user_id\)/);
   assert.match(schema, /with check \(auth\.uid\(\) = user_id and status = 'pending'\)/);
-  assert.doesNotMatch(schema, /create policy reports_update/i);
+  assert.match(schema, /grant update \(report_type, latitude, longitude, description\) on table public\.reports to authenticated/);
+  assert.match(schema, /create policy reports_update_own on public\.reports[\s\S]*?using \(auth\.uid\(\) = user_id\)[\s\S]*?with check \(auth\.uid\(\) = user_id\)/);
+  assert.match(schema, /create policy reports_delete_own on public\.reports[\s\S]*?using \(auth\.uid\(\) = user_id\)/);
+  assert.doesNotMatch(schema, /grant update \([^)]*status[^)]*\) on table public\.reports/i);
   assert.doesNotMatch(schema, /drop table/i);
 });
 

@@ -141,11 +141,15 @@
         </section>
         <div class="cloud-grid">
           <section class="cloud-section" aria-labelledby="favorites-title">
-            <h3 id="favorites-title">즐겨찾기 경로</h3>
-            <p>검색 장소 또는 지도에서 선택한 출발지·도착지를 저장합니다.</p>
-            <button id="save-favorite" class="primary-button compact" type="button">현재 경로 저장</button>
-            <p id="favorite-status" class="cloud-message" role="status" aria-live="polite"></p>
-            <ul id="favorite-list" class="cloud-list"></ul>
+            <div class="cloud-list-heading"><h3 id="favorites-title">즐겨찾기 경로 <span id="favorite-count" class="cloud-list-count" aria-live="polite">0</span></h3><button id="favorites-collapse" class="cloud-collapse" type="button" aria-expanded="true" aria-controls="favorites-content">접기</button></div>
+            <div id="favorites-content" class="cloud-list-content">
+              <p>검색 장소 또는 지도에서 선택한 출발지·도착지를 저장합니다.</p>
+              <button id="save-favorite" class="primary-button compact" type="button">현재 경로 저장</button>
+              <p id="favorite-status" class="cloud-message" role="status" aria-live="polite"></p>
+              <div class="cloud-search-row"><label class="sr-only" for="favorites-search">즐겨찾기 검색</label><input id="favorites-search" class="cloud-search" type="search" autocomplete="off" placeholder="출발지 또는 도착지 검색"><button id="favorites-search-clear" class="cloud-secondary search-clear" type="button" aria-label="즐겨찾기 검색어 지우기" hidden>지우기</button></div>
+              <p id="favorite-list-status" class="cloud-message" role="status" aria-live="polite"></p>
+              <ul id="favorite-list" class="cloud-list"></ul>
+            </div>
           </section>
           <section class="cloud-section" aria-labelledby="reports-title">
             <h3 id="reports-title">보행 환경 제보</h3>
@@ -156,8 +160,13 @@
               <label for="report-description">설명<textarea id="report-description" minlength="5" maxlength="1000" rows="3" required placeholder="확인한 보행 환경을 적어 주세요."></textarea></label>
               <button id="submit-report" class="primary-button compact" type="submit">제보 등록</button>
             </form>
-            <p id="report-message" class="cloud-message" role="status" aria-live="polite"></p>
-            <ul id="reports-list" class="cloud-list"></ul>
+            <p id="report-submit-message" class="cloud-message" role="status" aria-live="polite"></p>
+            <div class="cloud-list-heading report-list-heading"><h3 id="report-list-title">내 제보 <span id="report-count" class="cloud-list-count" aria-live="polite">0</span></h3><button id="reports-collapse" class="cloud-collapse" type="button" aria-expanded="true" aria-controls="reports-content">접기</button></div>
+            <div id="reports-content" class="cloud-list-content">
+              <p id="report-message" class="cloud-message" role="status" aria-live="polite"></p>
+              <div class="cloud-search-row"><label class="sr-only" for="reports-search">내 제보 검색</label><input id="reports-search" class="cloud-search" type="search" autocomplete="off" placeholder="유형, 위치, 설명 또는 상태 검색"><button id="reports-search-clear" class="cloud-secondary search-clear" type="button" aria-label="제보 검색어 지우기" hidden>지우기</button></div>
+              <ul id="reports-list" class="cloud-list"></ul>
+            </div>
           </section>
         </div>
       </div>
@@ -186,6 +195,17 @@
       </form>
       <p id="auth-message" class="cloud-message" role="status" aria-live="polite"></p>
     </div>
+  </dialog>
+
+  <dialog id="report-edit-dialog" class="auth-dialog report-edit-dialog" aria-labelledby="report-edit-title">
+    <div class="auth-dialog-heading"><div><p class="eyebrow">COMMUNITY REPORT</p><h2 id="report-edit-title">내 제보 수정</h2><p>유형, 위치, 설명을 수정할 수 있어요.</p></div><button id="report-edit-close" class="auth-close" type="button" aria-label="제보 수정 창 닫기"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button></div>
+    <form id="report-edit-form" class="cloud-report-form">
+      <label for="report-edit-type">제보 유형<select id="report-edit-type" required><option value="streetlight">가로등 고장</option><option value="sidewalk">보행로 파손</option><option value="crossing">횡단보도</option><option value="cctv">CCTV·안심벨</option><option value="other">기타</option></select></label>
+      <div class="cloud-coordinates"><label for="report-edit-latitude">위도<input id="report-edit-latitude" type="number" min="-90" max="90" step="any" required></label><label for="report-edit-longitude">경도<input id="report-edit-longitude" type="number" min="-180" max="180" step="any" required></label></div>
+      <label for="report-edit-description">설명<textarea id="report-edit-description" minlength="5" maxlength="1000" rows="4" required></textarea></label>
+      <div class="report-edit-actions"><button id="report-edit-save" class="primary-button compact" type="submit">변경 저장</button><button id="report-edit-cancel" class="cloud-secondary" type="button">취소</button></div>
+      <p id="report-edit-message" class="cloud-message" role="status" aria-live="polite"></p>
+    </form>
   </dialog>
 
   <script src="vendor/leaflet.js"></script>
