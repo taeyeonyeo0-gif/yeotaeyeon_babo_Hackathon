@@ -15,6 +15,9 @@ function copyRouteData() {
       copyFileSync('theme-bootstrap.js', resolve(output, 'theme-bootstrap.js'));
       copyFileSync('vendor/leaflet.js', resolve(output, 'vendor/leaflet.js'));
       copyFileSync('vendor/leaflet.css', resolve(output, 'vendor/leaflet.css'));
+      copyFileSync('robots.txt', resolve(output, 'robots.txt'));
+      copyFileSync('sitemap.xml', resolve(output, 'sitemap.xml'));
+      copyFileSync('safety-location-light.png', resolve(output, 'safety-location-light.png'));
     },
   };
 }

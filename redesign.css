@@ -300,6 +300,11 @@ body{transition:background-color 320ms ease,color 320ms ease}
 .brand-icon-dark{opacity:1;transform:scale(1)}
 .brand-icon-light{opacity:0;transform:scale(1)}
 .brand-mark img.brand-icon-light{inset:50% auto auto 50%;width:calc(100% - 20px);height:calc(100% - 20px);transform:translate(-50%,-50%)}
+.brand-copy .brand-name{margin:0;color:#f6f4ec;font-size:19px;font-weight:800;line-height:1.2;white-space:nowrap}
+@media(max-width:720px){.brand-copy .brand-name{font-size:17px}}
+:root[data-theme="light"] .brand-copy .brand-name{color:#18382F}
+.brand-copy .brand-name{transition:color 320ms ease}
+.service-summary{margin:0 0 10px;color:var(--app-secondary);font-size:11px;line-height:1.45}
 :root[data-theme="light"] .brand-icon-dark{opacity:0}
 :root[data-theme="light"] .brand-icon-light{opacity:1}
 .topbar,.brand-copy strong,.brand-copy small,.brand-tagline,.primary-nav a,.nav-account,.theme-control,.theme-control select,.workspace-tabs,.workspace-tab,.controls,.panel,.learn,.data-details,.cloud-panel,.cloud-section,.profile-settings,.profile-current-avatar,.auth-dialog,.primary-button,.cloud-secondary,.text-button,.swap-button,.icon-button,.map-toolbar,.map-legend,.map-caption,.route-card,.input-wrap input,.cloud-auth-form input,.cloud-report-form input,.cloud-report-form select,.cloud-report-form textarea{transition:background-color 320ms ease,color 320ms ease,border-color 320ms ease,box-shadow 320ms ease}

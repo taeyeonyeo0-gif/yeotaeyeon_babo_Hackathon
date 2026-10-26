@@ -4,11 +4,27 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#0d171b">
+  <meta name="robots" content="index,follow,max-image-preview:large">
+  <link rel="canonical" href="https://rtuen5ol07vsiygm.jitda.io/">
   <link rel="icon" type="image/png" href="./favicon-night.png">
   <link rel="icon" type="image/png" href="./favicon-day.png" media="not all" id="favicon-day-source">
   <script src="theme-bootstrap.js"></script>
-  <meta name="description" content="안심보행맵은 실제 보행망과 보안등·CCTV·안심벨 등 공개 데이터를 비교해 상황에 맞는 보행 경로 선택을 돕는 지도 서비스입니다.">
-  <title>안심보행맵 · 보행 안전 지도</title>
+  <meta name="description" content="안심보행맵은 공개된 보안등·CCTV·안심벨 데이터를 참고해 실제 보행망의 경로를 비교하고 탐색할 수 있는 지도 서비스입니다. 공개자료는 시설 작동이나 현장 안전을 보장하지 않습니다.">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="안심보행맵">
+  <meta property="og:title" content="안심보행맵 | 보행 안전 경로 탐색 지도">
+  <meta property="og:description" content="공개된 안전시설 데이터를 참고해 실제 보행망의 경로를 비교하고 탐색해 보세요. 현장 시설 작동과 안전을 보장하는 서비스는 아닙니다.">
+  <meta property="og:url" content="https://rtuen5ol07vsiygm.jitda.io/">
+  <meta property="og:image" content="https://rtuen5ol07vsiygm.jitda.io/safety-location-light.png">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="447">
+  <meta property="og:image:height" content="509">
+  <meta property="og:image:alt" content="안심보행맵의 위치 핀과 반짝임 아이콘">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="안심보행맵 | 보행 안전 경로 탐색 지도">
+  <meta name="twitter:description" content="공개된 안전시설 데이터를 참고해 실제 보행망의 경로를 비교하고 탐색해 보세요.">
+  <meta name="twitter:image" content="https://rtuen5ol07vsiygm.jitda.io/safety-location-light.png">
+  <title>안심보행맵 | 보행 안전 경로 탐색 지도</title>
   <link rel="stylesheet" href="vendor/leaflet.css">
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="theme.css">
@@ -20,7 +36,7 @@
   <header class="topbar">
     <a class="brand" href="#top" aria-label="안심보행맵 처음으로">
       <span class="brand-mark" aria-hidden="true"><img class="brand-icon brand-icon-dark" src="./safety-location-icon.png" alt=""><img class="brand-icon brand-icon-light" src="./safety-location-light.png" alt=""></span>
-      <span class="brand-copy"><strong data-brand-name>안심보행맵</strong><small data-brand-english>Safe Walk Map</small><span class="brand-tagline" data-brand-slogan>더 안심되는 길을, 데이터로 찾다.</span></span>
+      <span class="brand-copy"><h1 class="brand-name" data-brand-name>안심보행맵</h1><small data-brand-english>Safe Walk Map</small><span class="brand-tagline" data-brand-slogan>더 안심되는 길을, 데이터로 찾다.</span></span>
     </a>
     <nav class="primary-nav" aria-label="주요 메뉴"><a href="#panel-route" data-workspace-tab="route">경로 탐색</a><a href="#panel-route" data-workspace-tab="route">경로 비교</a><a href="#panel-account" data-workspace-tab="account">내 기록·제보</a><a href="#panel-data" data-workspace-tab="data">데이터</a></nav>
     <div class="topbar-right"><button id="nav-account" class="nav-account" type="button" aria-haspopup="dialog" aria-controls="auth-dialog"><span id="nav-user-label">로그인</span><span id="nav-user-avatar" class="nav-user-avatar" aria-hidden="true" hidden><img id="nav-user-photo" alt="" hidden><svg id="nav-user-fallback" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.2"/><path d="M5 20c.5-3.7 3.1-5.6 7-5.6s6.5 1.9 7 5.6"/></svg></span></button><label class="theme-control" for="theme-mode"><svg id="theme-sun" class="theme-icon" viewBox="0 0 24 24" aria-hidden="true" hidden><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/></svg><svg id="theme-moon" class="theme-icon" viewBox="0 0 24 24" aria-hidden="true" hidden><path d="M20.2 15.1A8.5 8.5 0 0 1 8.9 3.8 8.6 8.6 0 1 0 20.2 15.1Z"/></svg><span id="theme-status" aria-live="polite" aria-label="현재 적용된 테마">테마 적용 중</span><select id="theme-mode" aria-label="테마 선택 모드"><option value="auto">자동</option><option value="light">라이트</option><option value="dark">다크</option></select></label></div>
@@ -39,6 +55,7 @@
         <div id="workspace-tab-panels" class="workspace-tab-panels">
         <section id="panel-route" class="tab-panel" role="tabpanel" aria-labelledby="tab-route" data-tab-panel="route">
         <div class="panel-heading"><div><p class="eyebrow">PLAN YOUR RETURN</p><h2>경로 설정</h2></div><span class="coverage-chip"><i class="live-dot"></i>실제 보행망</span></div>
+        <p class="service-summary">안심보행맵은 공개 보행망과 보안등·CCTV·안심벨 데이터를 참고해 경로를 비교합니다. 공개자료는 현장 안전을 보장하지 않습니다.</p>
         <div id="status" class="status" role="status" aria-live="polite"><span class="status-indicator"></span> 실제 보행망을 불러오는 중…</div>
         <div id="route-fields" class="route-fields">
         <div class="field-group">

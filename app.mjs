@@ -6,7 +6,7 @@ const $=s=>document.querySelector(s);
 const routeDebugMode=new URLSearchParams(location.search).get('debug')==='route';
 const themeApi=window.nightpathTheme;
 const themeStorageKey=themeApi?.storageKey||'nightpath-theme-mode';
-function applyBrandConfig(){document.title=`${brandConfig.name} · ${brandConfig.title}`;document.querySelectorAll('[data-brand-name]').forEach(element=>element.textContent=brandConfig.name);document.querySelectorAll('[data-brand-english]').forEach(element=>element.textContent=brandConfig.english);document.querySelectorAll('[data-brand-slogan]').forEach(element=>element.textContent=brandConfig.slogan.replace('\n',' '));}
+function applyBrandConfig(){document.title=`${brandConfig.name} | ${brandConfig.title}`;document.querySelectorAll('[data-brand-name]').forEach(element=>element.textContent=brandConfig.name);document.querySelectorAll('[data-brand-english]').forEach(element=>element.textContent=brandConfig.english);document.querySelectorAll('[data-brand-slogan]').forEach(element=>element.textContent=brandConfig.slogan.replace('\n',' '));}
 applyBrandConfig();
 
 // 천호동 내부 클릭 판별 알고리즘 (Point-in-Polygon)
