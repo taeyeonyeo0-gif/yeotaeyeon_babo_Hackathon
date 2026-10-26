@@ -370,9 +370,9 @@ export async function initializeSupabaseUI({ getCurrentRoute, onLoadFavorite, on
         showMessage('#report-submit-message', '제보를 삭제하는 중…');
         try {
           const result = await deleteReport(supabase, ownerId, row.id);
-          if (currentUserId !== ownerId) return;
-          if (result.status === 'not-found') {
-            showMessage('#report-submit-message', '삭제할 제보를 찾지 못했어요.', true);
+      if (currentUserId !== ownerId) return;
+      if (result.status === 'not-found') {
+        showMessage('#report-submit-message', '제보를 찾지 못했거나 삭제 정책이 아직 적용되지 않았어요.', true);
             return;
           }
           await loadAccountData(ownerId);
@@ -443,7 +443,7 @@ export async function initializeSupabaseUI({ getCurrentRoute, onLoadFavorite, on
       });
       if (currentUserId !== ownerId) return;
       if (result.status === 'not-found') {
-        showMessage('#report-edit-message', '수정할 제보를 찾지 못했어요.', true);
+        showMessage('#report-edit-message', '제보를 찾지 못했거나 수정 정책이 아직 적용되지 않았어요.', true);
         return;
       }
       closeReportEditor();

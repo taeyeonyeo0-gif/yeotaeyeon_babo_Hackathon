@@ -20,3 +20,5 @@
 [ 2361385ms] [INFO] [preview-bridge] v1.1.0 @ https://rtuen5ol07vsiygm.jitda.io/__preview-bridge.js:1
 [ 2386398ms] [INFO] [preview-bridge] v1.1.0 @ https://rtuen5ol07vsiygm.jitda.io/__preview-bridge.js:1
 [ 2651313ms] [INFO] [preview-bridge] v1.1.0 @ https://rtuen5ol07vsiygm.jitda.io/__preview-bridge.js:1
+[ 3209439ms] [ERROR] Failed to load resource: the server responded with a status of 400 () @ https://gxttppuxcbsxtddllitj.supabase.co/rest/v1/reports?select=id&id=eq.00000000-0000-0000-0000-000000000001&limit=0:0
+[ 3247501ms] [INFO] [preview-bridge] v1.1.0 @ https://rtuen5ol07vsiygm.jitda.io/__preview-bridge.js:1
