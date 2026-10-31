@@ -1,0 +1,20 @@
+2026-10-29T09:48:45+00:00 tile=tile_1284600_351600_1285000_352000 bbox=[128.46, 35.16, 128.5, 35.2] input=/home/jovyan/fs/teams/1955/project-directory/south-korea-261025.osm.pbf output=/home/jovyan/fs/teams/1955/project-directory/data/generated/changwon-city/tiles/tile_1284600_351600_1285000_352000.geojson
+2026-10-29T09:48:45+00:00 [1/5] 창원시 행정경계 캐시를 확인합니다.
+2026-10-29T09:48:45+00:00 [BOUNDARY_CACHE_HIT] /home/jovyan/fs/teams/1955/project-directory/data/generated/changwon-city/cache/changwon-boundary.geojson sha256=1c30a88971e9890e29b7b107809324d8a0f84b8e08766fecc1d471483372d6f2
+2026-10-29T09:48:45+00:00 경계 캐시 확인 완료: 0.00s tile_clip_bounds=(128.46, 35.16, 128.5, 35.2)
+2026-10-29T09:48:45+00:00 [2/5] 타일 경계를 PBF 리더에 전달합니다. 전국 road network는 생성하지 않습니다.
+2026-10-29T09:48:45+00:00 [3/5] 단일 타일 보행 도로 읽기 시작: [128.46, 35.16, 128.5, 35.2]
+2026-10-29T09:48:45+00:00 PBF 읽기 0%
+2026-10-29T09:48:48+00:00 PBF 읽기 10%
+2026-10-29T09:48:53+00:00 PBF 읽기 20%
+2026-10-29T09:48:56+00:00 PBF 읽기 30%
+2026-10-29T09:49:02+00:00 PBF 읽기 40%
+2026-10-29T09:49:14+00:00 PBF 읽기 100%
+2026-10-29T09:49:14+00:00 PBF 타일 읽기 완료: 28.30s source_ways=157
+2026-10-29T09:49:14+00:00 [4/5] 타일 경계 안의 도로 좌표를 구성합니다.
+2026-10-29T09:49:14+00:00 좌표 구성 완료: 0.02s roads=155 ways=138 coords=1,917 bounds=[128.46, 35.16, 128.5, 35.2]
+2026-10-29T09:49:14+00:00 [5/5] 임시 GeoJSON을 검증한 뒤 타일과 완료 표식을 저장합니다.
+2026-10-29T09:49:14+00:00 완료: elapsed=28.40s roads=155 coords=1,917 bytes=72,433
+2026-10-29T09:49:14+00:00 DATA=/home/jovyan/fs/teams/1955/project-directory/data/generated/changwon-city/tiles/tile_1284600_351600_1285000_352000.geojson
+2026-10-29T09:49:14+00:00 COMPLETE=/home/jovyan/fs/teams/1955/project-directory/data/generated/changwon-city/tiles/tile_1284600_351600_1285000_352000.complete.json
+2026-10-29T09:49:14+00:00 LOG=/home/jovyan/fs/teams/1955/project-directory/data/generated/changwon-city/tiles/tile_1284600_351600_1285000_352000.log

@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0d171b">
+  <meta name="robots" content="index,follow,max-image-preview:large">
+  <link rel="canonical" href="https://rtuen5ol07vsiygm.jitda.io/">
+  <link rel="icon" type="image/png" href="./favicon-night.png">
+  <link rel="icon" type="image/png" href="./favicon-day.png" media="not all" id="favicon-day-source">
+  <script src="theme-bootstrap.js"></script>
+  <meta name="description" content="안심보행맵은 공개된 보안등·CCTV·안심벨 데이터를 참고해 실제 보행망의 경로를 비교하고 탐색할 수 있는 지도 서비스입니다. 공개자료는 시설 작동이나 현장 안전을 보장하지 않습니다.">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="안심보행맵">
+  <meta property="og:title" content="안심보행맵 | 보행 안전 경로 탐색 지도">
+  <meta property="og:description" content="공개된 안전시설 데이터를 참고해 실제 보행망의 경로를 비교하고 탐색해 보세요. 현장 시설 작동과 안전을 보장하는 서비스는 아닙니다.">
+  <meta property="og:url" content="https://rtuen5ol07vsiygm.jitda.io/">
+  <meta property="og:image" content="https://rtuen5ol07vsiygm.jitda.io/safety-location-light.png">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="447">
+  <meta property="og:image:height" content="509">
+  <meta property="og:image:alt" content="안심보행맵의 위치 핀과 반짝임 아이콘">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="안심보행맵 | 보행 안전 경로 탐색 지도">
+  <meta name="twitter:description" content="공개된 안전시설 데이터를 참고해 실제 보행망의 경로를 비교하고 탐색해 보세요.">
+  <meta name="twitter:image" content="https://rtuen5ol07vsiygm.jitda.io/safety-location-light.png">
+  <title>안심보행맵 | 보행 안전 경로 탐색 지도</title>
+  <link rel="stylesheet" href="vendor/leaflet.css">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="theme.css">
+  <link rel="stylesheet" href="redesign.css">
+  <style>.legend-network{display:inline-block;width:16px;height:0;border-top:2px solid #85918a;opacity:.85}.legend-test-network{display:inline-block;width:18px;height:0;border-top:2px dashed #d85be8}.legend-city-network{display:inline-block;width:18px;height:0;border-top:3px solid #11a8c4}.legend-source-link{white-space:nowrap;font-size:.9em;opacity:.8}</style>
+</head>
+<body id="top">
+  <script>document.body.dataset.theme=document.documentElement.dataset.theme||'dark';</script>
+  <header class="topbar">
+    <a class="brand" href="#top" aria-label="안심보행맵 처음으로">
+      <span class="brand-mark" aria-hidden="true"><img class="brand-icon brand-icon-dark" src="./safety-location-icon.png" alt=""><img class="brand-icon brand-icon-light" src="./safety-location-light.png" alt=""></span>
+      <span class="brand-copy"><h1 class="brand-name" data-brand-name>안심보행맵</h1><small data-brand-english>Safe Walk Map</small><span class="brand-tagline" data-brand-slogan>더 안심되는 길을, 데이터로 찾다.</span></span>
+    </a>
+    <nav class="primary-nav" aria-label="주요 메뉴"><a href="#panel-route" data-workspace-tab="route">경로 탐색</a><a href="#panel-route" data-workspace-tab="route">경로 비교</a><a href="#panel-account" data-workspace-tab="account">내 기록·제보</a><a href="#panel-data" data-workspace-tab="data">데이터</a></nav>
+    <div class="topbar-right"><button id="nav-account" class="nav-account" type="button" aria-haspopup="dialog" aria-controls="auth-dialog"><span id="nav-user-label">로그인</span><span id="nav-user-avatar" class="nav-user-avatar" aria-hidden="true" hidden><img id="nav-user-photo" alt="" hidden><svg id="nav-user-fallback" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.2"/><path d="M5 20c.5-3.7 3.1-5.6 7-5.6s6.5 1.9 7 5.6"/></svg></span></button><label class="theme-control" for="theme-mode"><svg id="theme-sun" class="theme-icon" viewBox="0 0 24 24" aria-hidden="true" hidden><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/></svg><svg id="theme-moon" class="theme-icon" viewBox="0 0 24 24" aria-hidden="true" hidden><path d="M20.2 15.1A8.5 8.5 0 0 1 8.9 3.8 8.6 8.6 0 1 0 20.2 15.1Z"/></svg><span id="theme-status" aria-live="polite" aria-label="현재 적용된 테마">테마 적용 중</span><select id="theme-mode" aria-label="테마 선택 모드"><option value="auto">자동</option><option value="light">라이트</option><option value="dark">다크</option></select></label></div>
+  </header>
+
+  <main>
+    <section id="route-workspace" class="workspace" aria-label="안심보행맵 경로 찾기">
+      <aside class="panel controls">
+        <button id="mobile-controls-toggle" class="drawer-toggle" type="button" aria-expanded="true" aria-controls="workspace-tab-panels" hidden><span class="drawer-toggle-icon" aria-hidden="true"></span><span data-drawer-label>탭 패널</span></button>
+        <div class="workspace-tabs" role="tablist" aria-label="지도 작업 선택">
+          <button id="tab-route" class="workspace-tab" type="button" role="tab" aria-selected="true" aria-controls="panel-route" data-workspace-tab="route">경로 설정</button>
+          <button id="tab-preferences" class="workspace-tab" type="button" role="tab" aria-selected="false" aria-controls="panel-preferences" data-workspace-tab="preferences" tabindex="-1">내 취향</button>
+          <button id="tab-account" class="workspace-tab" type="button" role="tab" aria-selected="false" aria-controls="panel-account" data-workspace-tab="account" tabindex="-1">계정·제보</button>
+          <button id="tab-data" class="workspace-tab" type="button" role="tab" aria-selected="false" aria-controls="panel-data" data-workspace-tab="data" tabindex="-1">데이터</button>
+        </div>
+        <div id="workspace-tab-panels" class="workspace-tab-panels">
+        <section id="panel-route" class="tab-panel" role="tabpanel" aria-labelledby="tab-route" data-tab-panel="route">
+        <div class="panel-heading"><div><p class="eyebrow">PLAN YOUR RETURN</p><h2>경로 설정</h2></div><span class="coverage-chip"><i class="live-dot"></i>실제 보행망</span></div>
+        <p class="service-summary">안심보행맵은 공개 보행망과 보안등·CCTV·안심벨 데이터를 참고해 경로를 비교합니다. 공개자료는 현장 안전을 보장하지 않습니다.</p>
+        <div id="status" class="status" role="status" aria-live="polite"><span class="status-indicator"></span> 실제 보행망을 불러오는 중…</div>
+        <div id="route-fields" class="route-fields">
+        <div class="field-group">
+          <label for="start">출발 장소</label>
+          <div class="input-wrap"><span class="place-dot start-dot" aria-hidden="true"></span><input type="search" id="start" list="places" autocomplete="off" placeholder="예: 천호역 2번 출구"></div>
+          <div class="small-actions"><button id="pick-start" class="text-button" type="button"><span aria-hidden="true">＋</span> 지도에서 출발 선택</button><button id="locate" class="text-button" type="button"><span aria-hidden="true">◎</span> 내 위치</button></div>
+        </div>
+        <button id="swap-points" class="swap-button" type="button" aria-label="출발지와 도착지 바꾸기" title="출발지와 도착지 바꾸기"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7h11l-3-3m3 3-3 3M17 17H6l3 3m-3-3 3-3"/></svg><span>출발·도착 바꾸기</span></button>
+        <div class="field-group destination-group">
+          <label for="end">도착 장소</label>
+          <div class="input-wrap"><span class="place-dot end-dot" aria-hidden="true"></span><input type="search" id="end" list="places" autocomplete="off" placeholder="장소를 검색하거나 지도에서 선택"></div>
+          <button id="pick-end" class="text-button" type="button"><span aria-hidden="true">＋</span> 지도에서 도착 선택</button>
+        </div>
+        <datalist id="places"></datalist>
+        <p id="snap-info" class="snap-info"></p>
+        <button id="search" class="primary-button" type="button" disabled><span>경로 비교하기</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></button>
+
+        <div class="settings">
+          <div class="range-heading"><label for="extra">추가로 걸을 수 있는 시간</label><b id="extraValue">5분</b></div>
+          <input id="extra" type="range" min="0" max="15" value="5" aria-label="추가로 걸을 수 있는 시간">
+          <label for="speed">걷는 속도</label>
+          <select id="speed"><option value="60">천천히 · 60m/분</option><option value="80" selected>보통 · 80m/분</option><option value="100">빠르게 · 100m/분</option></select>
+          <details class="advanced">
+            <summary>추천 기준 조정</summary>
+            <div id="weights"></div>
+            <button id="reset" class="text-button" type="button">기본 기준으로 되돌리기</button>
+            <p id="mode" class="fine">기본 가중치 · 검증된 안전 계수가 아닙니다.</p>
+          </details>
+        </div>
+        <p class="privacy-note"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 5 6v5c0 4.8 3 8 7 10 4-2 7-5.2 7-10V6l-7-3Z"/><path d="m9 12 2 2 4-4"/></svg>현재 위치는 직접 요청할 때만 사용돼요.</p>
+        </div>
+        <section id="results" class="results" aria-live="polite" aria-label="경로 비교 결과"></section>
+        <p id="route-reason" class="route-reason"></p>
+        <aside class="notice control-notice"><span class="notice-icon" aria-hidden="true">i</span><span>공개자료 기반 참고 정보입니다. 시설 작동·점등과 현장 안전은 실시간 확인되지 않습니다.</span></aside>
+        </section>
+        <section id="panel-preferences" class="tab-panel" role="tabpanel" aria-labelledby="tab-preferences" data-tab-panel="preferences" hidden></section>
+        <section id="panel-account" class="tab-panel" role="tabpanel" aria-labelledby="tab-account" data-tab-panel="account" hidden></section>
+        <section id="panel-data" class="tab-panel" role="tabpanel" aria-labelledby="tab-data" data-tab-panel="data" hidden>
+          <h2 class="panel-section-title">사용한 데이터와 경로 계산 방식</h2>
+        </section>
+        </div>
+      </aside>
+
+      <section class="map-panel" aria-label="실제 보행 경로 지도">
+        <div class="map-toolbar">
+          <div><p class="eyebrow">천호 · 성내 + 창원 시험 도로</p><h2>실제 보행 경로 <span id="map-count" class="map-count"></span></h2></div>
+          <button id="fit" class="icon-button fit-button" type="button" title="경로 전체 보기"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4H4v4m12-4h4v4M4 16v4h4m12-4v4h-4M4 8l6 6m10-6-6 6"/></svg><span>경로 전체</span></button>
+        </div>
+        <div class="map-legend" aria-label="지도 표시 항목">
+          <span class="legend-item"><i class="legend-route"></i>선택 경로</span>
+          <span class="legend-item"><i class="legend-shortest"></i>최단 경로</span>
+          <span class="legend-item"><i class="legend-network"></i>공개 보행 링크</span>
+          <label class="legend-toggle" title="복원된 OSM PBF에서 창원 소구역만 추출한 시험 도로"><input id="show-test-roads" type="checkbox"><i class="legend-test-network"></i>창원 OSM 시험 도로</label>
+          <label class="legend-toggle" title="완료 표식이 확인된 창원 인접 타일만 현재 지도 범위에서 불러옵니다"><input id="show-city-tiles" type="checkbox"><i class="legend-city-network"></i>창원 OSM 인접 타일</label>
+          <a class="legend-source-link" href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OSM 출처</a>
+          <span id="test-road-status" role="status" aria-live="polite">숨김</span>
+          <span id="city-tile-status" role="status" aria-live="polite">숨김</span>
+          <span class="legend-divider"></span>
+          <label class="legend-toggle"><input id="show-lamps" type="checkbox"><i class="legend-lamp"></i>보안등</label>
+          <label class="legend-toggle"><input id="show-cctv" type="checkbox" checked><i class="legend-camera"></i>CCTV·안심벨</label>
+        </div>
+        <div id="map" aria-label="기존 보행망과 창원 OSM 시험 도로 지도"></div>
+        <div class="map-caption"><span class="map-caption-icon" aria-hidden="true">⌖</span><span id="map-hint">회색 선은 기존 공개 보행 링크, 보라색 점선은 창원 소구역 시험 도로, 청록색 선은 완료된 인접 타일입니다. 두 시험 레이어는 경로 계산에 사용되지 않습니다.</span></div>
+      </section>
+    </section>
+
+    <details id="route-debug" class="data-details panel" hidden>
+      <summary><span><span class="eyebrow">DEVELOPMENT ONLY</span><strong>경로·지도 진단</strong></span><span class="details-chevron" aria-hidden="true">＋</span></summary>
+      <div class="details-content">
+        <p>회색 보행망과 배경 타일을 각각 끄고 켜서 경로 형상을 비교합니다. 좌표는 모두 원본 표기와 Leaflet 화면 좌표를 함께 표시합니다.</p>
+        <div class="debug-toggles"><label><input id="debug-tiles" type="checkbox" checked> 배경 타일</label><label><input id="debug-network" type="checkbox" checked> 회색 보행망</label><label><input id="debug-route-line" type="checkbox" checked> 경로선</label></div>
+        <pre id="route-debug-output" style="max-height:420px;overflow:auto;white-space:pre-wrap">경로를 계산하면 진단 정보가 표시됩니다.</pre>
+      </div>
+    </details>
+
+    <div id="workspace-auxiliary" hidden>
+    <section class="learn panel">
+      <div class="learn-copy"><p class="eyebrow">A ROUTE THAT FEELS RIGHT</p><h2>내 취향을 반영해볼까요?</h2><p>여러 출발·도착 경로 중 선호하는 길을 고르면 다음 추천에 반영할 수 있어요.</p><p id="count" class="count">선택 0개</p><button id="apply" class="primary-button compact" type="button" disabled>선택으로 추천 기준 학습</button><button id="clear" class="text-button" type="button">선택 기록 초기화</button><p class="fine">기록은 현재 탭에만 저장되며 새로고침하면 사라져요. 안전성을 예측하거나 보장하는 기능은 아닙니다.</p></div>
+      <div class="choices"><div id="pairs"></div><p id="learningStatus" class="learning-status" aria-live="polite">실제 경로를 먼저 비교해 주세요.</p></div>
+    </section>
+
+    <section id="cloud-panel" class="cloud-panel panel" aria-labelledby="cloud-title">
+      <div class="cloud-heading">
+        <div><p class="eyebrow">ACCOUNT / COMMUNITY</p><h2 id="cloud-title">계정과 보행 환경 제보</h2><p>즐겨찾기와 제보 내역은 로그인한 본인 계정에서만 확인할 수 있어요.</p></div>
+        <p id="cloud-status" class="cloud-status" role="status" aria-live="polite">Supabase 연결을 확인하고 있어요.</p>
+      </div>
+      <p id="cloud-redirect-help" class="cloud-message"></p>
+      <p class="cloud-message">즐겨찾기와 제보 내역은 로그인한 계정에서만 볼 수 있어요. 로그인은 화면 오른쪽 위 버튼에서 열 수 있습니다.</p>
+      <p id="cloud-config-message" class="cloud-message" hidden></p>
+      <div id="cloud-account-view" class="cloud-account-view" hidden>
+        <div class="cloud-account-bar"><span>로그인 계정 <strong id="account-email"></strong></span><button id="cloud-logout" class="cloud-secondary" type="button">로그아웃</button></div>
+        <section class="profile-settings cloud-section" aria-labelledby="profile-title">
+          <div class="profile-heading"><div><h3 id="profile-title">프로필 사진</h3><p>계정에 저장되어 다른 기기에서도 사용할 수 있어요.</p></div><div id="profile-current-avatar" class="profile-current-avatar" aria-label="현재 프로필 사진"><img id="profile-current-photo" alt="" hidden><svg id="profile-current-fallback" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.2"/><path d="M5 20c.5-3.7 3.1-5.6 7-5.6s6.5 1.9 7 5.6"/></svg></div></div>
+          <div class="profile-actions"><button id="profile-change-photo" class="cloud-secondary" type="button">프로필 사진 변경</button><button id="profile-remove-photo" class="cloud-secondary" type="button" hidden>기본 프로필로 되돌리기</button></div>
+          <p class="profile-storage-note">비공개 저장소를 사용합니다. 운영자는 Supabase SQL Editor에서 supabase/avatar-storage.sql 설정을 적용해야 합니다.</p>
+          <div id="profile-editor" class="profile-editor" hidden>
+            <p class="profile-file-help">JPG, PNG, WebP · 최대 5MB</p>
+            <input id="profile-file-input" type="file" accept="image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp" hidden>
+            <button id="profile-choose-file" class="cloud-secondary" type="button">기기에서 사진 선택</button>
+            <div id="profile-preview-wrap" class="profile-preview-wrap" hidden><img id="profile-preview" alt="저장 전 프로필 사진 미리보기"></div>
+            <p id="profile-file-name" class="profile-file-name"></p>
+            <div class="profile-editor-actions"><button id="profile-save-photo" class="primary-button compact" type="button" disabled>사진 저장</button><button id="profile-cancel-photo" class="cloud-secondary" type="button">취소</button></div>
+          </div>
+          <p id="profile-status" class="cloud-message" role="status" aria-live="polite"></p>
+        </section>
+        <div class="cloud-grid">
+          <section class="cloud-section" aria-labelledby="favorites-title">
+            <div class="cloud-list-heading"><h3 id="favorites-title">즐겨찾기 경로 <span id="favorite-count" class="cloud-list-count" aria-live="polite">0</span></h3><button id="favorites-collapse" class="cloud-collapse" type="button" aria-expanded="true" aria-controls="favorites-content">접기</button></div>
+            <div id="favorites-content" class="cloud-list-content">
+              <p>검색 장소 또는 지도에서 선택한 출발지·도착지를 저장합니다.</p>
+              <button id="save-favorite" class="primary-button compact" type="button">현재 경로 저장</button>
+              <p id="favorite-status" class="cloud-message" role="status" aria-live="polite"></p>
+              <div class="cloud-search-row"><label class="sr-only" for="favorites-search">즐겨찾기 검색</label><input id="favorites-search" class="cloud-search" type="search" autocomplete="off" placeholder="출발지 또는 도착지 검색"><button id="favorites-search-clear" class="cloud-secondary search-clear" type="button" aria-label="즐겨찾기 검색어 지우기" hidden>지우기</button></div>
+              <p id="favorite-list-status" class="cloud-message" role="status" aria-live="polite"></p>
+              <ul id="favorite-list" class="cloud-list"></ul>
+            </div>
+          </section>
+          <section class="cloud-section" aria-labelledby="reports-title">
+            <h3 id="reports-title">보행 환경 제보</h3>
+            <form id="report-form" class="cloud-report-form">
+              <label for="report-type">제보 유형<select id="report-type" required><option value="streetlight">가로등</option><option value="sidewalk">보행로</option><option value="crossing">횡단보도</option><option value="cctv">CCTV·안심벨</option><option value="other">기타</option></select></label>
+              <div class="cloud-coordinates"><label for="report-latitude">위도<input id="report-latitude" type="number" min="-90" max="90" step="any" required placeholder="37.540000"></label><label for="report-longitude">경도<input id="report-longitude" type="number" min="-180" max="180" step="any" required placeholder="127.120000"></label></div>
+              <button id="pick-report-location" class="cloud-secondary" type="button">지도에서 제보 위치 선택</button>
+              <label for="report-description">설명<textarea id="report-description" minlength="5" maxlength="1000" rows="3" required placeholder="확인한 보행 환경을 적어 주세요."></textarea></label>
+              <button id="submit-report" class="primary-button compact" type="submit">제보 등록</button>
+            </form>
+            <p id="report-submit-message" class="cloud-message" role="status" aria-live="polite"></p>
+            <div class="cloud-list-heading report-list-heading"><h3 id="report-list-title">내 제보 <span id="report-count" class="cloud-list-count" aria-live="polite">0</span></h3><button id="reports-collapse" class="cloud-collapse" type="button" aria-expanded="true" aria-controls="reports-content">접기</button></div>
+            <div id="reports-content" class="cloud-list-content">
+              <p id="report-message" class="cloud-message" role="status" aria-live="polite"></p>
+              <div class="cloud-search-row"><label class="sr-only" for="reports-search">내 제보 검색</label><input id="reports-search" class="cloud-search" type="search" autocomplete="off" placeholder="유형, 위치, 설명 또는 상태 검색"><button id="reports-search-clear" class="cloud-secondary search-clear" type="button" aria-label="제보 검색어 지우기" hidden>지우기</button></div>
+              <ul id="reports-list" class="cloud-list"></ul>
+            </div>
+          </section>
+        </div>
+      </div>
+    </section>
+
+    <details id="data-details" class="data-details panel">
+      <summary><span><span class="eyebrow">ABOUT THE DATA</span><strong>사용한 데이터와 경로 계산 방식</strong></span><span class="details-chevron" aria-hidden="true">＋</span></summary>
+      <div class="details-content"><div id="source-summary"></div><div class="explain-grid"><article><span class="detail-index">01</span><h3>실제 보행망을 따라가요</h3><p>보행 통행이 허용된 링크와 연결 노드로 경로를 계산합니다. 연결되지 않은 길을 임의로 이어 안내하지 않아요.</p><span class="detail-index">02</span><h3>주변 시설을 거리로 비교해요</h3><p>경로를 따라 보안등 30m, 등록 CCTV 50m 이내인 구간의 비율을 보여줘요. 실제 밝기나 촬영 범위는 뜻하지 않습니다.</p></article><article><span class="detail-index">03</span><h3>시간 범위 안에서 대안을 찾아요</h3><p>최단 경로와 설정한 추가 시간 안에서 시설 근접도를 고려한 경로를 비교합니다. 결과는 이 데이터와 계산 기준에 한정돼요.</p><span class="detail-index">04</span><h3>현장 정보는 별도로 확인해 주세요</h3><p>공사·폐쇄, 점등·촬영 상태, 신호 대기와 실제 보행 안전은 반영되지 않습니다. 등록되지 않은 시설이 실제로 없다는 뜻도 아니에요.</p></article></div><div class="downloads"><button id="export" class="text-button" type="button">현재 경로·선택 기록 내려받기 (JSON)</button></div></div>
+    </details>
+    <footer><span class="footer-brand"><span data-brand-name>안심보행맵</span> <span data-brand-english>Safe Walk Map</span></span><span data-brand-slogan>더 안심되는 길을, 데이터로 찾다.</span><span>공개자료 기반 참고 정보</span></footer>
+    </div>
+  </main>
+
+  <dialog id="auth-dialog" class="auth-dialog" aria-labelledby="auth-title">
+    <div class="auth-dialog-heading">
+      <div><p class="eyebrow">SAFE WALK MAP ACCOUNT</p><h2 id="auth-title">로그인</h2><p>계정으로 즐겨찾기와 제보를 관리하세요.</p></div>
+      <button id="auth-close" class="auth-close" type="button" aria-label="로그인 창 닫기"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
+    </div>
+    <p id="auth-config-message" class="cloud-message" hidden></p>
+    <div id="cloud-auth-view" class="cloud-auth-view">
+      <form id="cloud-auth-form" class="cloud-auth-form" autocomplete="on">
+        <label for="auth-email">이메일<input id="auth-email" type="email" autocomplete="email" maxlength="254" required placeholder="name@example.com"></label>
+        <label for="auth-password">비밀번호<input id="auth-password" type="password" autocomplete="current-password" minlength="6" maxlength="128" required placeholder="6자 이상"></label>
+        <button id="auth-login" class="primary-button" type="submit">로그인</button>
+        <button id="auth-signup" class="cloud-secondary auth-signup" type="button">회원가입</button>
+      </form>
+      <p id="auth-message" class="cloud-message" role="status" aria-live="polite"></p>
+    </div>
+  </dialog>
+
+  <dialog id="report-edit-dialog" class="auth-dialog report-edit-dialog" aria-labelledby="report-edit-title">
+    <div class="auth-dialog-heading"><div><p class="eyebrow">COMMUNITY REPORT</p><h2 id="report-edit-title">내 제보 수정</h2><p>유형, 위치, 설명을 수정할 수 있어요.</p></div><button id="report-edit-close" class="auth-close" type="button" aria-label="제보 수정 창 닫기"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button></div>
+    <form id="report-edit-form" class="cloud-report-form">
+      <label for="report-edit-type">제보 유형<select id="report-edit-type" required><option value="streetlight">가로등 고장</option><option value="sidewalk">보행로 파손</option><option value="crossing">횡단보도</option><option value="cctv">CCTV·안심벨</option><option value="other">기타</option></select></label>
+      <div class="cloud-coordinates"><label for="report-edit-latitude">위도<input id="report-edit-latitude" type="number" min="-90" max="90" step="any" required></label><label for="report-edit-longitude">경도<input id="report-edit-longitude" type="number" min="-180" max="180" step="any" required></label></div>
+      <label for="report-edit-description">설명<textarea id="report-edit-description" minlength="5" maxlength="1000" rows="4" required></textarea></label>
+      <div class="report-edit-actions"><button id="report-edit-save" class="primary-button compact" type="submit">변경 저장</button><button id="report-edit-cancel" class="cloud-secondary" type="button">취소</button></div>
+      <p id="report-edit-message" class="cloud-message" role="status" aria-live="polite"></p>
+    </form>
+  </dialog>
+
+  <script src="vendor/leaflet.js"></script>
+  <script type="module" src="app.mjs?v=cheonho-start-route-fit-1"></script>
+</body>
+</html>
