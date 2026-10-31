@@ -1,0 +1,47 @@
+2026-10-28T03:18:06+00:00 [0/4] 기준 타일 검증: bbox=[128.66, 35.2, 128.7, 35.24]
+2026-10-28T03:18:06+00:00 [0/4] 기준 타일 재사용: roads=2456 coords=15499 sha256=ba9d0ebc5c661e29b689becdc850efe3f7c2da8b5184885e1847ac99c54a025e
+2026-10-28T03:18:07+00:00 경계 캐시 조회: /home/jovyan/fs/teams/1955/project-directory/data/generated/changwon-city/cache/changwon-boundary.geojson
+2026-10-28T03:18:07+00:00 [BOUNDARY_CACHE_MISS] /home/jovyan/fs/teams/1955/project-directory/data/generated/changwon-city/cache/changwon-boundary.geojson
+2026-10-28T03:18:07+00:00 [BOUNDARY_SOURCE] 외부 네트워크는 사용하지 않습니다. 로컬 PBF의 행정경계만 조회합니다.
+2026-10-28T03:18:07+00:00 경계 조회 PBF 진행 0%
+2026-10-28T03:18:17+00:00 경계 조회 PBF 진행 10%
+2026-10-28T03:18:33+00:00 경계 조회 PBF 진행 34%
+2026-10-28T03:18:34+00:00 경계 조회 PBF 진행 100%
+2026-10-28T03:18:35+00:00 [BOUNDARY_CACHE_SAVED] /home/jovyan/fs/teams/1955/project-directory/data/generated/changwon-city/cache/changwon-boundary.geojson bounds=[128.3479474, 35.0333962, 128.8433535, 35.394254] sha256=1c30a88971e9890e29b7b107809324d8a0f84b8e08766fecc1d471483372d6f2
+2026-10-28T03:18:35+00:00 [배치 오류] ValueError: 창원시 행정경계에 완전히 포함되지 않은 인접 타일이 있습니다: [(128.7, 35.2, 128.74, 35.24)]
+2026-10-28T03:18:35+00:00 Traceback (most recent call last):
+  File "/home/jovyan/fs/teams/1955/project-directory/build_changwon_road_tiles.py", line 710, in run_neighbor_batch
+    raise ValueError(
+ValueError: 창원시 행정경계에 완전히 포함되지 않은 인접 타일이 있습니다: [(128.7, 35.2, 128.74, 35.24)]
+
+2026-10-28T03:20:27+00:00 [0/4] 기준 타일 검증: bbox=[128.66, 35.2, 128.7, 35.24]
+2026-10-28T03:20:27+00:00 [0/4] 기준 타일 재사용: roads=2456 coords=15499 sha256=ba9d0ebc5c661e29b689becdc850efe3f7c2da8b5184885e1847ac99c54a025e
+2026-10-28T03:20:27+00:00 경계 캐시 조회: /home/jovyan/fs/teams/1955/project-directory/data/generated/changwon-city/cache/changwon-boundary.geojson
+2026-10-28T03:20:27+00:00 [BOUNDARY_CACHE_HIT] /home/jovyan/fs/teams/1955/project-directory/data/generated/changwon-city/cache/changwon-boundary.geojson sha256=1c30a88971e9890e29b7b107809324d8a0f84b8e08766fecc1d471483372d6f2
+2026-10-28T03:20:27+00:00 네 타일 경계 교차 확인 완료: 부분 교차 1개는 행정경계로 잘립니다.
+2026-10-28T03:20:27+00:00 [1/4] 타일 처리 시작: tile_1286200_352000_1286600_352400 bbox=[128.62, 35.2, 128.66, 35.24]
+2026-10-28T10:02:27+00:00 [0/4] 기준 타일 검증: bbox=[128.66, 35.2, 128.7, 35.24]
+2026-10-28T10:02:27+00:00 [0/4] 기준 타일 재사용: roads=2456 coords=15499 sha256=ba9d0ebc5c661e29b689becdc850efe3f7c2da8b5184885e1847ac99c54a025e
+2026-10-28T10:02:27+00:00 경계 캐시 조회: /home/jovyan/fs/teams/1955/project-directory/data/generated/changwon-city/cache/changwon-boundary.geojson
+2026-10-28T10:02:29+00:00 [BOUNDARY_CACHE_HIT] /home/jovyan/fs/teams/1955/project-directory/data/generated/changwon-city/cache/changwon-boundary.geojson sha256=1c30a88971e9890e29b7b107809324d8a0f84b8e08766fecc1d471483372d6f2
+2026-10-28T10:02:29+00:00 네 타일 경계 교차 확인 완료: 부분 교차 1개는 행정경계로 잘립니다.
+2026-10-28T10:02:29+00:00 [1/4] 타일 처리 시작: tile_1286200_352000_1286600_352400 bbox=[128.62, 35.2, 128.66, 35.24]
+2026-10-28T10:02:56+00:00 [1/4] 검증 완료: roads=724 coords=4195 sha256=d9b30ad4880efcc9aeec58520c5e99d39cf57d8f40bebfa012f8a95cfeac6907
+2026-10-28T10:02:56+00:00 [2/4] 타일 처리 시작: tile_1287000_352000_1287400_352400 bbox=[128.7, 35.2, 128.74, 35.24]
+2026-10-28T10:03:24+00:00 [2/4] 검증 완료: roads=736 coords=5516 sha256=3119b50960563c172ddd87d773715163f64d7066e120cc48a944c5b8ef6f3590
+2026-10-28T10:03:24+00:00 [3/4] 타일 처리 시작: tile_1286600_351600_1287000_352000 bbox=[128.66, 35.16, 128.7, 35.2]
+2026-10-28T10:03:54+00:00 [3/4] 검증 완료: roads=540 coords=4890 sha256=997c536871aba12a40c72415f5ad957ea070d0e802e0bf633043ddef4a6ea138
+2026-10-28T10:03:54+00:00 [4/4] 타일 처리 시작: tile_1286600_352400_1287000_352800 bbox=[128.66, 35.24, 128.7, 35.28]
+2026-10-28T10:04:24+00:00 [4/4] 검증 완료: roads=1083 coords=7450 sha256=cde3449baa8d13cfeaeda1d3b90649bc319d6e04e15e4bab70d0a5b580bbf01a
+2026-10-28T10:04:24+00:00 배치 종료: 완료 4/4 · 실패 0 · manifest=/home/jovyan/fs/teams/1955/project-directory/data/generated/changwon-city/manifest.json
+2026-10-28T10:07:03+00:00 [0/4] 기준 타일 검증: bbox=[128.66, 35.2, 128.7, 35.24]
+2026-10-28T10:07:03+00:00 [0/4] 기준 타일 재사용: roads=2456 coords=15499 sha256=ba9d0ebc5c661e29b689becdc850efe3f7c2da8b5184885e1847ac99c54a025e
+2026-10-28T10:07:03+00:00 [재사용] tile_1286200_352000_1286600_352400 sha256=d9b30ad4880efcc9aeec58520c5e99d39cf57d8f40bebfa012f8a95cfeac6907
+2026-10-28T10:07:03+00:00 [재사용] tile_1287000_352000_1287400_352400 sha256=3119b50960563c172ddd87d773715163f64d7066e120cc48a944c5b8ef6f3590
+2026-10-28T10:07:03+00:00 [재사용] tile_1286600_351600_1287000_352000 sha256=997c536871aba12a40c72415f5ad957ea070d0e802e0bf633043ddef4a6ea138
+2026-10-28T10:07:03+00:00 [재사용] tile_1286600_352400_1287000_352800 sha256=cde3449baa8d13cfeaeda1d3b90649bc319d6e04e15e4bab70d0a5b580bbf01a
+2026-10-28T10:07:03+00:00 [1/4] 완료 타일 건너뜀: tile_1286200_352000_1286600_352400
+2026-10-28T10:07:03+00:00 [2/4] 완료 타일 건너뜀: tile_1287000_352000_1287400_352400
+2026-10-28T10:07:03+00:00 [3/4] 완료 타일 건너뜀: tile_1286600_351600_1287000_352000
+2026-10-28T10:07:03+00:00 [4/4] 완료 타일 건너뜀: tile_1286600_352400_1287000_352800
+2026-10-28T10:07:03+00:00 배치 종료: 완료 4/4 · 실패 0 · manifest=/home/jovyan/fs/teams/1955/project-directory/data/generated/changwon-city/manifest.json

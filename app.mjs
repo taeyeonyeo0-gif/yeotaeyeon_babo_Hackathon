@@ -23,7 +23,7 @@ function insidePolygon(point, vs) {
 }
 
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-let data,engine,map,tileLayer,roadLayer,lineLayer,pinLayer,lampLayer,cameraLayer,weights=[...defaults],last,selected,shown=[],pairRoutes=[],samples=[],pick=null,watch=null,gpsMarker,gpsCircle,worker,serial=0,requestId=0,themeMode=themeApi?.mode||'auto',themeTimer=null;const pending=new Map();let positions={start:null,end:null},placeLabels=new Map();
+let data,engine,map,tileLayer,roadLayer,testRoadLayer,testRoadLoadPromise,cityTileManifest,cityTileManifestPromise,cityTileLayers=new Map(),cityTileRequests=new Map(),cityTileFailures=new Map(),cityTilesEnabled=false,cityTileSyncSerial=0,lineLayer,pinLayer,lampLayer,cameraLayer,weights=[...defaults],last,selected,shown=[],pairRoutes=[],samples=[],pick=null,watch=null,gpsMarker,gpsCircle,worker,serial=0,requestId=0,themeMode=themeApi?.mode||'auto',themeTimer=null;const pending=new Map();let positions={start:null,end:null},placeLabels=new Map();
 const status=(text,error=false)=>{$('#status').textContent=text;$('#status').classList.toggle('error',error);};
 const signature=r=>r.edgeIds.join(',');
 const sameSnap=(a,b)=>Boolean(a&&b&&a.edgeId===b.edgeId&&a.segment===b.segment&&a.t===b.t&&a.offsetAlong===b.offsetAlong&&a.p[0]===b.p[0]&&a.p[1]===b.p[1]&&a.nodes[0]===b.nodes[0]&&a.nodes[1]===b.nodes[1]);
@@ -32,6 +32,77 @@ function refreshTheme(){applyTheme(themeApi?.resolveTheme(themeMode)||'dark');}
 function scheduleThemeRefresh(){clearTimeout(themeTimer);const now=new Date(),delay=60000-now.getSeconds()*1000-now.getMilliseconds()+25;themeTimer=setTimeout(()=>{if(themeMode==='auto')refreshTheme();scheduleThemeRefresh();},delay);}
 function initializeTheme(){const select=$('#theme-mode');themeMode=themeApi?.mode||'auto';if(select){const day=select.querySelector('option[value="light"]'),night=select.querySelector('option[value="dark"]');if(day)day.textContent='낮';if(night)night.textContent='밤';select.value=themeMode;select.onchange=event=>{themeMode=event.target.value;try{localStorage.setItem(themeStorageKey,themeMode);}catch{}refreshTheme();};}refreshTheme();scheduleThemeRefresh();document.addEventListener('visibilitychange',()=>{if(!document.hidden&&themeMode==='auto')refreshTheme();});}
 function handleTileError(){status('배경지도 연결이 느려요. 보행망·경로·안전시설은 계속 표시됩니다.');}
+async function loadTestRoadLayer(){
+ if(testRoadLayer)return testRoadLayer;
+ if(!testRoadLoadPromise)testRoadLoadPromise=(async()=>{
+  const response=await fetch('./data/generated/changwon-walking.json',{cache:'no-cache'});
+  if(!response.ok)throw Error(`창원 OSM 시험 도로 파일을 불러오지 못했어요 (${response.status}).`);
+  const graph=await response.json(),edges=Array.isArray(graph.edges)?graph.edges:[],lines=edges.filter(edge=>Array.isArray(edge.geometry)&&edge.geometry.length>1&&edge.geometry.every(point=>Array.isArray(point)&&point.length===2&&point.every(Number.isFinite)));
+  if(!lines.length)throw Error('시험 도로 파일에 표시할 실제 도로 좌표가 없어요.');
+  testRoadLayer=L.featureGroup(lines.map(edge=>L.polyline(edge.geometry.map(point=>[point[1],point[0]]),{color:'#d85be8',weight:2,opacity:.9,smoothFactor:1.5,interactive:false})));testRoadLayer.testRoadCount=lines.length;testRoadLayer.snapshot=graph.meta?.retrieved||'시점 미상';
+  return testRoadLayer;
+ })();
+ try{return await testRoadLoadPromise;}catch(error){testRoadLoadPromise=null;throw error;}
+}
+function configureTestRoadToggle(){
+ const toggle=$('#show-test-roads'),label=$('#test-road-status');if(!toggle)return;
+ toggle.addEventListener('change',async()=>{
+  if(!toggle.checked){if(testRoadLayer&&map.hasLayer(testRoadLayer))map.removeLayer(testRoadLayer);if(label)label.textContent='숨김';return;}
+  toggle.disabled=true;if(label)label.textContent='불러오는 중';
+  try{const layer=await loadTestRoadLayer();if(!map.hasLayer(layer)){layer.addTo(map);if(!map.getBounds().intersects(layer.getBounds()))map.fitBounds(layer.getBounds(),{padding:[28,28],maxZoom:16});}if(label)label.textContent=`${layer.testRoadCount.toLocaleString()}개 · OSM ${layer.snapshot}`;}
+  catch(error){toggle.checked=false;if(label)label.textContent='파일 오류';console.error('[안심보행맵] 창원 OSM 시험 도로 표시 실패:',error);}
+  finally{toggle.disabled=false;}
+ });
+}
+async function loadCityTileManifest(){
+ if(cityTileManifest)return cityTileManifest;
+ if(!cityTileManifestPromise)cityTileManifestPromise=(async()=>{
+  const response=await fetch('./data/generated/changwon-city/manifest.json',{cache:'no-cache'});if(!response.ok)throw Error(`창원 타일 목록을 불러오지 못했어요 (${response.status}).`);
+  const manifest=await response.json();if(manifest.schema!=='changwon-osm-road-tiles-v1'||!Array.isArray(manifest.tiles)||!manifest.tiles.length)throw Error('완료된 창원 인접 타일 목록이 비었거나 형식이 올바르지 않아요.');
+  if(manifest.tiles.some(tile=>!tile.id||typeof tile.file!=='string'||!tile.file.startsWith('tiles/')||tile.file.includes('..')||!Array.isArray(tile.bbox)||tile.bbox.length!==4||!tile.bbox.every(Number.isFinite)))throw Error('타일 목록에 잘못된 범위 또는 파일 경로가 있어요.');
+  cityTileManifest=manifest;return manifest;
+ })();
+ try{return await cityTileManifestPromise;}catch(error){cityTileManifestPromise=null;throw error;}
+}
+async function loadCityTile(tile){
+ if(cityTileLayers.has(tile.id))return cityTileLayers.get(tile.id);
+ let request=cityTileRequests.get(tile.id);
+ if(!request){
+  request=(async()=>{
+   const url=new URL(`./data/generated/changwon-city/${tile.file}`,location.href),response=await fetch(url,{cache:'force-cache'});if(!response.ok)throw Error(`타일 파일을 불러오지 못했어요 (${response.status}): ${tile.id}`);
+   const collection=await response.json();if(collection.type!=='FeatureCollection'||!Array.isArray(collection.features)||collection.features.length!==tile.featureCount||collection.meta?.coordinateCount!==tile.coordinateCount)throw Error(`타일 내용과 완료 manifest가 일치하지 않아요: ${tile.id}`);
+   const layer=L.geoJSON(collection,{style:()=>({color:'#11a8c4',weight:2.4,opacity:.92,smoothFactor:1.5}),interactive:false});if(collection.features.length&&!layer.getBounds().isValid())throw Error(`타일 좌표를 검증할 수 없어요: ${tile.id}`);layer.cityTileRoadCount=collection.features.length;return layer;
+  })();
+  cityTileRequests.set(tile.id,request);
+ }
+ try{const layer=await request;cityTileLayers.set(tile.id,layer);return layer;}finally{if(cityTileRequests.get(tile.id)===request)cityTileRequests.delete(tile.id);}
+}
+async function syncCityTileLayer(){
+ if(!cityTilesEnabled||!cityTileManifest)return;
+ const serial=++cityTileSyncSerial,bounds=map.getBounds().pad(.035),visible=cityTileManifest.tiles.filter(tile=>bounds.getWest()<=tile.bbox[2]&&bounds.getEast()>=tile.bbox[0]&&bounds.getSouth()<=tile.bbox[3]&&bounds.getNorth()>=tile.bbox[1]),visibleIds=new Set(visible.map(tile=>tile.id)),label=$('#city-tile-status');
+ for(const[id,layer]of cityTileLayers){if(!visibleIds.has(id)){if(map.hasLayer(layer))map.removeLayer(layer);cityTileLayers.delete(id);}}
+ if(!visible.length){if(label)label.textContent='준비 타일 없음';return;}
+ if(label)label.textContent='불러오는 중';
+ const results=await Promise.all(visible.map(async tile=>{
+  if(cityTileFailures.has(tile.id))return{tile,error:cityTileFailures.get(tile.id)};
+  try{const layer=await loadCityTile(tile);if(serial!==cityTileSyncSerial||!cityTilesEnabled||!visibleIds.has(tile.id))return{tile,stale:true};if(!map.hasLayer(layer))layer.addTo(map);return{tile,layer};}
+  catch(error){cityTileFailures.set(tile.id,error);console.warn('[안심보행맵] 창원 OSM 타일 로딩 실패:',tile.id,error);return{tile,error};}
+ }));
+ if(serial!==cityTileSyncSerial||!cityTilesEnabled)return;
+ const loaded=results.filter(result=>result.layer&&map.hasLayer(result.layer)),roadCount=loaded.reduce((total,result)=>total+result.layer.cityTileRoadCount,0),failed=results.filter(result=>result.error).length;
+ if(label)label.textContent=failed?`${loaded.length}/${visible.length} · 오류 ${failed}`:`${loaded.length}/${visible.length}타일 · ${roadCount.toLocaleString()}선`;
+}
+function configureCityTileToggle(){
+ const toggle=$('#show-city-tiles'),label=$('#city-tile-status');if(!toggle)return;
+ map.on('moveend zoomend',()=>{if(cityTilesEnabled)void syncCityTileLayer();});
+ toggle.addEventListener('change',async()=>{
+  if(!toggle.checked){cityTilesEnabled=false;cityTileSyncSerial++;for(const layer of cityTileLayers.values())if(map.hasLayer(layer))map.removeLayer(layer);cityTileLayers.clear();cityTileFailures.clear();if(label)label.textContent='숨김';return;}
+  toggle.disabled=true;if(label)label.textContent='타일 목록 불러오는 중';
+  try{const manifest=await loadCityTileManifest(),[west,south,east,north]=manifest.availableBounds,availableBounds=L.latLngBounds([[south,west],[north,east]]);cityTilesEnabled=true;if(!map.getBounds().intersects(availableBounds))map.fitBounds(availableBounds,{padding:[28,28],maxZoom:13});await syncCityTileLayer();}
+  catch(error){cityTilesEnabled=false;toggle.checked=false;if(label)label.textContent='타일 목록 오류';console.error('[안심보행맵] 창원 타일 목록 로딩 실패:',error);}
+  finally{toggle.disabled=false;}
+ });
+}
 function updateRouteDebug(){if(!routeDebugMode||!$('#route-debug-output'))return;const start=positions.start,end=positions.end;if(!last||!start||!end){$('#route-debug-output').textContent=JSON.stringify({graphSnapshot:data?.meta?.retrieved,activeGraph:engine?.graphStats,origin:start?.raw||null,startSnap:start?.snap||null,destination:end?.raw||null,endSnap:end?.snap||null,route:'pending'},null,2);return;}const route=shown[selected]||last.shortest,geometry=route.geometry||engine.geometry(route),leafletPoints=geometry.map(p=>[p[1],p[0]]),mapRect=map.getContainer().getBoundingClientRect(),iconCenters=[...document.querySelectorAll('#map .leaflet-marker-icon.pin')].map(icon=>{const rect=icon.getBoundingClientRect();return{x:rect.left+rect.width/2-mapRect.left,y:rect.top+rect.height/2-mapRect.top};}),edges=route.edgeIds.map((id,i)=>{const edge=data.edges[id],from=route.nodes[i],to=route.nodes[i+1];return{id,sourceId:edge.sourceId,nodes:[from,to],connects:(edge.a===from&&edge.b===to)||(edge.a===to&&edge.b===from),distance:edge.distance,geometry:edge.geometry};}),segmentChecks=geometry.slice(1).map((point,i)=>{const a=geometry[i],mid=[(a[0]+point[0])/2,(a[1]+point[1])/2],hit=engine.nearest(mid);return{segment:i,nearestEdge:hit.edgeId,offsetMeters:+hit.distance.toFixed(3)};}),routeStartPixel=map.latLngToContainerPoint(leafletPoints[0]),routeEndPixel=map.latLngToContainerPoint(leafletPoints.at(-1)),startMarkerPixel=map.latLngToContainerPoint([start.snap.p[1],start.snap.p[0]]),endMarkerPixel=map.latLngToContainerPoint([end.snap.p[1],end.snap.p[0]]);$('#route-debug-output').textContent=JSON.stringify({graphSnapshot:data.meta.retrieved,activeGraph:engine.graphStats,baseTileVisible:map.hasLayer(tileLayer),walkGraphVisible:map.hasLayer(roadLayer),routeVisible:map.hasLayer(lineLayer),origin:{raw:start.raw,snap:start.snap},destination:{raw:end.raw,snap:end.snap},route:{nodes:route.nodes,edgeIds:route.edgeIds,start:geometry[0],end:geometry.at(-1),coordinatesLonLat:geometry,leafletLatLon:leafletPoints,endpointGapMeters:[meters(geometry[0],start.snap.p),meters(geometry.at(-1),end.snap.p)]},pixels:{routeStart:routeStartPixel,markerStart:startMarkerPixel,routeEnd:routeEndPixel,markerEnd:endMarkerPixel,renderedMarkerCenters:iconCenters},edges,segmentChecks},null,2);}
 function clearRoute(){last=null;shown=[];selected=0;pairRoutes=[];lineLayer?.clearLayers();$('#results').innerHTML='';$('#pairs').innerHTML='';$('#route-reason').textContent='';updateRouteDebug();}
 function controls(){ $('#weights').innerHTML=names.map((n,i)=>`<div class="rangehead"><label for="w${i}">${n}</label><b id="v${i}">${weights[i].toFixed(1)}</b></div><input id="w${i}" type="range" min="-5" max="5" step="0.1" value="${weights[i]}">`).join('');names.forEach((_,i)=>$('#w'+i).oninput=e=>{weights[i]=+e.target.value;$('#v'+i).textContent=weights[i].toFixed(1);$('#mode').textContent='직접 조정한 가중치';schedule();});}
@@ -99,8 +170,8 @@ async function init(){try{
    data.meta.sources.network={name:'OpenStreetMap 보행 링크',page:data.meta.sources.osm.page,date:data.meta.retrieved};
    const extraCctvResponse=await fetch('./data/cheonho-cctv.csv',{cache:'no-cache'});if(extraCctvResponse.ok){const added=appendSupplementalCctv(data,await extraCctvResponse.text());data.meta.audit.cctv=(data.meta.audit.cctv||0)+added;}
   engine=makeEngine(data);if(!globalThis.L)throw Error('지도 기능을 불러오지 못했어요. 새로고침해 주세요.');const audit=data.meta.audit;Object.assign(audit,{snapshot_nodes:audit.nodes,snapshot_links:audit.links,nodes:engine.graphStats.activeNodeCount,links:engine.graphStats.activeEdgeCount,component_count:engine.graphStats.componentCount,excluded_disconnected_nodes:engine.graphStats.disconnectedNodeCount,duplicate_reverse_edge_records:engine.graphStats.duplicateReverseRecords,disconnected_physical_edges:engine.graphStats.disconnectedPhysicalEdges});
-    const worldBounds=L.latLngBounds([[-85.05112878,-180],[85.05112878,180]]);
-   map=L.map('map',{preferCanvas:true,zoomControl:true,worldCopyJump:false,maxBounds:worldBounds,maxBoundsViscosity:1,minZoom:0}).setView([37.542,127.128],15);let tileErrors=0;tileLayer=L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,noWrap:true,attribution:'© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors'}).on('tileerror',()=>{if(++tileErrors===3)handleTileError();}).addTo(map);L.control.scale({imperial:false}).addTo(map);
+       const mapViewBounds=L.latLngBounds([[22,101],[49,141]]),mapViewCenter=mapViewBounds.getCenter();
+    map=L.map('map',{preferCanvas:true,zoomControl:true,worldCopyJump:false,maxBounds:mapViewBounds,maxBoundsViscosity:1,minZoom:3}).setView(mapViewCenter,3);const setMapRangeMinZoom=()=>{const minimum=map.getBoundsZoom(mapViewBounds,true,L.point(32,32));map.setMinZoom(minimum);if(map.getZoom()<minimum)map.fitBounds(mapViewBounds,{padding:[32,32],maxZoom:minimum,animate:false});return minimum;};const mapRangeMinZoom=setMapRangeMinZoom();map.fitBounds(mapViewBounds,{padding:[32,32],maxZoom:mapRangeMinZoom,animate:false});map.on('resize',setMapRangeMinZoom);let tileErrors=0;tileLayer=L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,noWrap:true,attribution:'© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors'}).on('tileerror',()=>{if(++tileErrors===3)handleTileError();}).addTo(map);L.control.scale({imperial:false}).addTo(map);
  
  const b=data.meta.bbox;L.rectangle([[b[1],b[0]],[b[3],b[2]]],{color:'#647a89',weight:1,dashArray:'5 8',fill:false,interactive:false}).addTo(map);
 
@@ -109,7 +180,7 @@ async function init(){try{
      const latlngs = data.meta.boundary.map(p => [p[1], p[0]]);
        L.polygon(latlngs, {color: '#d47569', weight: 2, dashArray: '5 8', fill: false, interactive: false}).addTo(map);
  }
-  roadLayer=L.layerGroup(engine.activeEdges.map(e=>L.polyline(e.geometry.map(p=>[p[1],p[0]]),{color:'#64748b',weight:3,opacity:.55,interactive:false}))).addTo(map);lineLayer=L.layerGroup().addTo(map);pinLayer=L.layerGroup().addTo(map);
+    roadLayer=L.layerGroup(engine.activeEdges.map(e=>L.polyline(e.geometry.map(p=>[p[1],p[0]]),{color:'#64748b',weight:3,opacity:.55,interactive:false}))).addTo(map);lineLayer=L.layerGroup().addTo(map);pinLayer=L.layerGroup().addTo(map);configureTestRoadToggle();configureCityTileToggle();
   if(routeDebugMode){$('#route-debug').hidden=false;$('#route-debug').open=true;$('#debug-tiles').onchange=e=>{e.target.checked?tileLayer.addTo(map):map.removeLayer(tileLayer);updateRouteDebug();};$('#debug-network').onchange=e=>{e.target.checked?roadLayer.addTo(map):map.removeLayer(roadLayer);updateRouteDebug();};$('#debug-route-line').onchange=e=>{e.target.checked?lineLayer.addTo(map):map.removeLayer(lineLayer);updateRouteDebug();};map.on('moveend zoomend',updateRouteDebug);}
  lampLayer=L.layerGroup();cameraLayer=L.layerGroup().addTo(map);for(const f of data.facilities){const color=f.type==='lamp'?'#d29413':f.type==='cctv'?'#367bb8':'#cb6545';const marker=L.circleMarker([f.p[1],f.p[0]],{radius:f.type==='lamp'?3:5,color,weight:1,fillColor:color,fillOpacity:.75}).bindPopup(`<b>${f.type==='lamp'?'등록 보안등':f.type==='cctv'?'안심귀갓길 CCTV':'안심벨'}</b>${esc(f.id)}<br>자료 기준: ${esc(f.date)}<br>현재 작동 상태 미확인`);marker.addTo(f.type==='lamp'?lampLayer:cameraLayer);}
  
@@ -132,7 +203,7 @@ async function init(){try{
    $('#source-summary').insertAdjacentHTML('beforeend',`<p>보행 접근이 확인되지 않은 OSM trunk·trunk_link·busway 간선 기록 ${a.access_excluded_edges}개를 제외했습니다. 동일한 물리 도로의 역방향 중복 레코드 ${a.duplicate_reverse_edge_records}개는 하나로 처리하고, 서로 다른 형상의 평행 간선은 유지합니다. 최대 연결 성분 ${a.nodes.toLocaleString()}개 노드만 경로·스냅·지도 선에 사용합니다.</p>`);
    controls();try{worker=new Worker('./route-worker.mjs?v=bigroad-off',{type:'module'});worker.onmessage=e=>{const p=pending.get(e.data.id);if(!p)return;pending.delete(e.data.id);e.data.error?p.reject(Error(e.data.error)):p.resolve(e.data.result||e.data);};worker.onerror=()=>{for(const p of pending.values())p.reject(Error('경로 계산을 다시 시도해 주세요.'));pending.clear();worker?.terminate();worker=null;};await rpc('init',{data});}catch{worker?.terminate();worker=null;}
    void initializeSupabaseUI({getCurrentRoute:()=>last&&positions.start&&positions.end?{startName:favoriteName(positions.start),endName:favoriteName(positions.end),restorable:Boolean(favoriteLocation(favoriteName(positions.start))&&favoriteLocation(favoriteName(positions.end)))}:null,onLoadFavorite:async favorite=>{const start=favoriteLocation(favorite.start_name),end=favoriteLocation(favorite.end_name);if(!start||!end)throw Error('즐겨찾기 장소를 현재 보행망에서 찾을 수 없어요.');setPoint('start',start,favorite.start_name);setPoint('end',end,favorite.end_name);await calculate();},onPickReportLocation:pickReportLocation});
-   $('#search').disabled=false;await calculate();registerTool();
+    $('#search').disabled=false;await calculate();if(last)fit();registerTool();
  }catch(e){console.error(e);status(e.message||'지도를 불러오지 못했어요. 새로고침해 주세요.',true);}}
   function clearPickButton(){document.querySelectorAll('#pick-start,#pick-end,#pick-report-location').forEach(button=>{button.style.background='';button.style.color='';button.style.borderColor='';button.style.boxShadow='';button.style.transform='';});}
   function pickReportLocation(){if(!map)return;clearPickButton();pick='report';const button=$('#pick-report-location');button.style.background='#b8ed87';button.style.color='#0b1720';button.style.borderColor='#b8ed87';button.style.boxShadow='0 0 0 3px rgba(184,237,135,.22)';map.getContainer().classList.add('pick-mode');$('#map-hint').textContent='지도에서 제보할 보행 환경 위치를 선택해 주세요.';status('제보 위치를 선택해 주세요.');$('#map').scrollIntoView({block:'center',behavior:'smooth'});}

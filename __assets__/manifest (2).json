@@ -1,0 +1,46 @@
+{
+  "format": "byte-exact-file-parts-v1",
+  "source_filename": "south-korea-261025.osm.pbf",
+  "source_size_bytes": 290087135,
+  "source_sha256": "395e4e7cdbad3eea862227cb6290433efef274959a6deaf7f15916d17f2f2b2b",
+  "max_part_size_bytes": 47185920,
+  "part_count": 7,
+  "parts": [
+    {
+      "name": "south-korea-261025.osm.pbf.part001",
+      "size_bytes": 47185920,
+      "sha256": "2dd05fdf80751a4c60b338a7f2d6a9df6188b6409382076c3957d57e86cee0ab"
+    },
+    {
+      "name": "south-korea-261025.osm.pbf.part002",
+      "size_bytes": 47185920,
+      "sha256": "b28e6943766d875e1486b1c26d14d52358d110980fafdb146a2797616c937071"
+    },
+    {
+      "name": "south-korea-261025.osm.pbf.part003",
+      "size_bytes": 47185920,
+      "sha256": "d63d74f5c7a7765db8b0d3c1da3f22c35177af2734ce8d47df8190349357792e"
+    },
+    {
+      "name": "south-korea-261025.osm.pbf.part004",
+      "size_bytes": 47185920,
+      "sha256": "f19b557df9673bb02c12812c0aa46672d266dc959c2a5ee9f410baec63bd3ce4"
+    },
+    {
+      "name": "south-korea-261025.osm.pbf.part005",
+      "size_bytes": 47185920,
+      "sha256": "a29a89c2e5286560ddfb67d3c5165ea8883645ae897164402900ebd8a6bb58f5"
+    },
+    {
+      "name": "south-korea-261025.osm.pbf.part006",
+      "size_bytes": 47185920,
+      "sha256": "01140299c6e544f9455c93cf62cb47fa8fa0ce43c1409cd6b03cbf978ea9224e"
+    },
+    {
+      "name": "south-korea-261025.osm.pbf.part007",
+      "size_bytes": 6971615,
+      "sha256": "007969499455e525a2c48829f3e68b8a216c9587371a8159537953c0e27673e4"
+    }
+  ],
+  "important_note": "These are raw byte chunks, not independently parseable PBF files. Concatenate all chunks in listed order to reconstruct the exact original file."
+}
