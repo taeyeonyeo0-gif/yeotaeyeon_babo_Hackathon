@@ -1,3 +1,0 @@
-User-agent: *
-Allow: /
-Sitemap: https://rtuen5ol07vsiygm.jitda.io/sitemap.xml
