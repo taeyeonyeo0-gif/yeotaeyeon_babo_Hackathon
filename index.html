@@ -54,9 +54,10 @@
         </div>
         <div id="workspace-tab-panels" class="workspace-tab-panels">
         <section id="panel-route" class="tab-panel" role="tabpanel" aria-labelledby="tab-route" data-tab-panel="route">
-        <div class="panel-heading"><div><p class="eyebrow">PLAN YOUR RETURN</p><h2>경로 설정</h2></div><span class="coverage-chip"><i class="live-dot"></i>실제 보행망</span></div>
-        <p class="service-summary">안심보행맵은 공개 보행망과 보안등·CCTV·안심벨 데이터를 참고해 경로를 비교합니다. 공개자료는 현장 안전을 보장하지 않습니다.</p>
-        <div id="status" class="status" role="status" aria-live="polite"><span class="status-indicator"></span> 실제 보행망을 불러오는 중…</div>
+         <div class="panel-heading"><div><p class="eyebrow">PLAN YOUR RETURN</p><h2>경로 설정</h2></div><span class="coverage-chip"><i class="live-dot"></i>실제 보행망</span></div>
+         <p class="service-summary">안심보행맵은 공개 보행망과 보안등·CCTV·안심벨 데이터를 참고해 경로를 비교합니다. 공개자료는 현장 안전을 보장하지 않습니다.</p>
+         <div class="field-group region-search-group"><label for="region-search">지역 보행망 검색</label><div class="input-wrap"><input type="search" id="region-search" autocomplete="off" placeholder="예: 대구 동성로, 부산 서면"></div><button id="load-region" class="text-button" type="button">이 지역 보행망 불러오기</button><p id="region-status" class="fine" role="status" aria-live="polite">천호·성내 보행망이 기본으로 표시됩니다.</p></div>
+         <div id="status" class="status" role="status" aria-live="polite"><span class="status-indicator"></span> 실제 보행망을 불러오는 중…</div>
         <div id="route-fields" class="route-fields">
         <div class="field-group">
           <label for="start">출발 장소</label>
@@ -101,7 +102,7 @@
 
       <section class="map-panel" aria-label="실제 보행 경로 지도">
         <div class="map-toolbar">
-          <div><p class="eyebrow">천호 · 성내 + 창원 시험 도로</p><h2>실제 보행 경로 <span id="map-count" class="map-count"></span></h2></div>
+          <div><p id="map-region-label" class="eyebrow">천호 · 성내</p><h2>실제 보행 경로 <span id="map-count" class="map-count"></span></h2></div>
           <button id="fit" class="icon-button fit-button" type="button" title="경로 전체 보기"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4H4v4m12-4h4v4M4 16v4h4m12-4v4h-4M4 8l6 6m10-6-6 6"/></svg><span>경로 전체</span></button>
         </div>
         <div class="map-legend" aria-label="지도 표시 항목">
@@ -118,7 +119,7 @@
           <label class="legend-toggle"><input id="show-cctv" type="checkbox" checked><i class="legend-camera"></i>CCTV·안심벨</label>
         </div>
         <div id="map" aria-label="기존 보행망과 창원 OSM 시험 도로 지도"></div>
-        <div class="map-caption"><span class="map-caption-icon" aria-hidden="true">⌖</span><span id="map-hint">회색 선은 기존 공개 보행 링크, 보라색 점선은 창원 소구역 시험 도로, 청록색 선은 완료된 인접 타일입니다. 두 시험 레이어는 경로 계산에 사용되지 않습니다.</span></div>
+        <div class="map-caption"><span class="map-caption-icon" aria-hidden="true">⌖</span><span id="map-hint">회색 선은 현재 지역의 공개 보행 링크, 빨간색 선은 계산된 경로입니다.</span></div>
       </section>
     </section>
 

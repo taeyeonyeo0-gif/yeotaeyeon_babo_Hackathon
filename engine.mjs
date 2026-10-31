@@ -5,12 +5,15 @@ export const xy=p=>[(p[0]-127.13)*111195*Math.cos(37.54*Math.PI/180),(p[1]-37.54
 export const meters=(a,b)=>{const x=xy(a),y=xy(b);return Math.hypot(x[0]-y[0],x[1]-y[1]);};
 class Heap{constructor(){this.a=[];}compare(a,b){return a.f-b.f||a.cost-b.cost||a.n-b.n;}push(v){const a=this.a;let i=a.length;a.push(v);while(i){const p=(i-1)>>1;if(this.compare(a[p],v)<=0)break;a[i]=a[p];i=p;}a[i]=v;}pop(){const a=this.a,t=a[0],v=a.pop();if(a.length){let i=0;while(i*2+1<a.length){let c=i*2+1;if(c+1<a.length&&this.compare(a[c+1],a[c])<0)c++;if(this.compare(v,a[c])<=0)break;a[i]=a[c];i=c;}a[i]=v;}return t;}get length(){return this.a.length;}}
 export function makeEngine(data){
- const facilities=Array.isArray(data.facilities)?data.facilities:[],cellSize=100;
- const buildIndex=type=>{const grid=new Map();let count=0;for(const facility of facilities){if(facility.type!==type||!Array.isArray(facility.p)||!facility.p.every(Number.isFinite))continue;const point=xy(facility.p),cx=Math.floor(point[0]/cellSize),cy=Math.floor(point[1]/cellSize),key=`${cx},${cy}`;if(!grid.has(key))grid.set(key,[]);grid.get(key).push(point);count++;}return{grid,count};};
+  const bbox=data.meta?.bbox,lonOrigin=Array.isArray(bbox)&&bbox.length===4?(bbox[0]+bbox[2])/2:127.13,latOrigin=Array.isArray(bbox)&&bbox.length===4?(bbox[1]+bbox[3])/2:37.54;
+  const graphXY=p=>[(p[0]-lonOrigin)*111195*Math.cos(latOrigin*Math.PI/180),(p[1]-latOrigin)*111195];
+  const graphMeters=(a,b)=>{const x=graphXY(a),y=graphXY(b);return Math.hypot(x[0]-y[0],x[1]-y[1]);};
+  const facilities=Array.isArray(data.facilities)?data.facilities:[],cellSize=100;
+  const buildIndex=type=>{const grid=new Map();let count=0;for(const facility of facilities){if(facility.type!==type||!Array.isArray(facility.p)||!facility.p.every(Number.isFinite))continue;const point=graphXY(facility.p),cx=Math.floor(point[0]/cellSize),cy=Math.floor(point[1]/cellSize),key=`${cx},${cy}`;if(!grid.has(key))grid.set(key,[]);grid.get(key).push(point);count++;}return{grid,count};};
  const lampIndex=buildIndex('lamp'),cctvIndex=buildIndex('cctv');
   const covered=(point,index,radius)=>{if(!index.count)return false;const cx=Math.floor(point[0]/cellSize),cy=Math.floor(point[1]/cellSize),r2=radius*radius,reach=Math.ceil(radius/cellSize);for(let dx=-reach;dx<=reach;dx++)for(let dy=-reach;dy<=reach;dy++)for(const facility of index.grid.get(`${cx+dx},${cy+dy}`)||[]){const x=point[0]-facility[0],y=point[1]-facility[1];if(x*x+y*y<=r2)return true;}return false;};
   // Sample each displayed segment at most five meters apart so edge and access coverage share a basis.
-  const coverage=(points,index,radius)=>{if(!index.count||!Array.isArray(points)||points.length<2)return null;let total=0,near=0;for(let i=1;i<points.length;i++){const a=xy(points[i-1]),b=xy(points[i]),length=Math.hypot(b[0]-a[0],b[1]-a[1]);if(!length)continue;const parts=Math.max(1,Math.ceil(length/5-1e-9)),weight=length/parts;for(let j=0;j<parts;j++){const t=(j+.5)/parts,p=[a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t];total+=weight;if(covered(p,index,radius))near+=weight;}}return total?near/total:0;};
+   const coverage=(points,index,radius)=>{if(!index.count||!Array.isArray(points)||points.length<2)return null;let total=0,near=0;for(let i=1;i<points.length;i++){const a=graphXY(points[i-1]),b=graphXY(points[i]),length=Math.hypot(b[0]-a[0],b[1]-a[1]);if(!length)continue;const parts=Math.max(1,Math.ceil(length/5-1e-9)),weight=length/parts;for(let j=0;j<parts;j++){const t=(j+.5)/parts,p=[a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t];total+=weight;if(covered(p,index,radius))near+=weight;}}return total?near/total:0;};
  const qualityForGeometry=(points,fallback=[])=>[coverage(points,lampIndex,data.meta?.radiiMeters?.lamp||30)??fallback[0]??0,coverage(points,cctvIndex,data.meta?.radiiMeters?.cctv||50)??fallback[1]??0];
  const edgeQuality=edge=>{const quality=[...(edge.quality||[])];const measured=qualityForGeometry(edge.geometry,quality);quality[0]=measured[0];quality[1]=measured[1];return quality;};
  const candidates=[],seenPhysical=new Set();let duplicateReverseRecords=0;
@@ -25,8 +28,8 @@ export function makeEngine(data){
  const graphStats={componentCount:componentSizes.length,activeNodeCount:componentSizes[largestComponent]||0,disconnectedNodeCount:data.nodes.length-(componentSizes[largestComponent]||0),activeEdgeCount:edges.length,sourceEdgeCount:data.edges.length,accessExcludedEdgeCount:data.edges.filter(e=>e.graphExcluded).length,duplicateReverseRecords,disconnectedPhysicalEdges:candidates.length-edges.length};
  function route(start,end,weights=[0,0,0],penalize=null,strength=0,useH=true){
    if(!data.nodes[start]||!data.nodes[end]||!activeNodes[start]||!activeNodes[end])throw Error('지도 안의 연결된 보행 지점을 선택해 주세요.');
-   const alpha=Math.min(1,...edges.map(e=>e.distance/Math.max(1e-9,meters(data.nodes[e.a].p,data.nodes[e.b].p))))*.999999;
-  const h=n=>useH?alpha*meters(data.nodes[n].p,data.nodes[end].p):0;
+    const alpha=Math.min(1,...edges.map(e=>e.distance/Math.max(1e-9,graphMeters(data.nodes[e.a].p,data.nodes[e.b].p))))*.999999;
+   const h=n=>useH?alpha*graphMeters(data.nodes[n].p,data.nodes[end].p):0;
   const open=new Heap(),best=new Float64Array(data.nodes.length).fill(Infinity),prev=new Array(data.nodes.length);best[start]=0;open.push({n:start,cost:0,f:h(start)});let expanded=0;
    while(open.length){const cur=open.pop();if(cur.cost>best[cur.n]+1e-8)continue;expanded++;
    if(cur.n===end){let n=end,ids=[],ns=[end];while(n!==start){const [p,eid]=prev[n];ids.push(eid);ns.push(p);n=p;}return summarize(ids.reverse(),ns.reverse(),expanded);}
@@ -82,21 +85,21 @@ export function makeEngine(data){
   function nearest(p){
    let best={node:-1,distance:Infinity,p:null,edgeId:null,segment:0,t:0,offsetAlong:0};
    const project=(point,a,b)=>{
-    const pp=xy(point),aa=xy(a),bb=xy(b),dx=bb[0]-aa[0],dy=bb[1]-aa[1],length=dx*dx+dy*dy;
-    const t=length?Math.max(0,Math.min(1,((pp[0]-aa[0])*dx+(pp[1]-aa[1])*dy)/length)):0;
-    const qx=aa[0]+t*dx,qy=aa[1]+t*dy,lon=127.13+qx/(111195*Math.cos(37.54*Math.PI/180)),lat=37.54+qy/111195;
+     const pp=graphXY(point),aa=graphXY(a),bb=graphXY(b),dx=bb[0]-aa[0],dy=bb[1]-aa[1],length=dx*dx+dy*dy;
+     const t=length?Math.max(0,Math.min(1,((pp[0]-aa[0])*dx+(pp[1]-aa[1])*dy)/length)):0;
+     const qx=aa[0]+t*dx,qy=aa[1]+t*dy,lon=lonOrigin+qx/(111195*Math.cos(latOrigin*Math.PI/180)),lat=latOrigin+qy/111195;
     return{distance:Math.hypot(pp[0]-qx,pp[1]-qy),p:[lon,lat],t};
    };
     for(const edge of edges){let along=0;const total=pathLength(edge.geometry);for(let i=1;i<edge.geometry.length;i++){
      const hit=project(p,edge.geometry[i-1],edge.geometry[i]);
-     const offsetAlong=along+meters(edge.geometry[i-1],hit.p);
+      const offsetAlong=along+graphMeters(edge.geometry[i-1],hit.p);
      if(hit.distance<best.distance){const node=offsetAlong<=total/2?edge.a:edge.b;best={node,nodes:[edge.a,edge.b],distance:hit.distance,p:hit.p,edgeId:edge.id,segment:i-1,t:hit.t,offsetAlong};}
-     along+=meters(edge.geometry[i-1],edge.geometry[i]);
+      along+=graphMeters(edge.geometry[i-1],edge.geometry[i]);
    }}
    return best;
   }
    function compact(points){return points.filter((p,i)=>!i||p[0]!==points[i-1][0]||p[1]!==points[i-1][1]);}
-   function pathLength(points){return points.slice(1).reduce((sum,p,i)=>sum+meters(points[i],p),0);}
+    function pathLength(points){return points.slice(1).reduce((sum,p,i)=>sum+graphMeters(points[i],p),0);}
    function snapToNode(snap,node){
     const edge=data.edges[snap.edgeId];
     if(!edge||(node!==edge.a&&node!==edge.b))throw Error('경로 끝점을 보행 링크에 연결하지 못했어요.');
