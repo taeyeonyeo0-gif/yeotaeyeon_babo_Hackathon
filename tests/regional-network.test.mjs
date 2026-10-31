@@ -1,54 +1,67 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { makeEngine } from '../engine.mjs';
-import { boundsAround, buildRegionalGraph, parseOSMXml } from '../regional-network.mjs';
+import { makeEngine, meters } from '../engine.mjs';
+import { boundsAround, loadRegionalGraph, searchRegion } from '../regional-network.mjs';
 
-const place = {
-  geometry: { coordinates: [127.01, 37.01] },
-  properties: { name: '테스트 지역', countrycode: 'KR' },
-};
-const bbox = [127, 37, 127.02, 37.02];
-const xml = `<?xml version="1.0"?><osm version="0.6">
-  <node id="1" lat="37.01" lon="127.001" />
-  <node id="2" lat="37.01" lon="127.01" />
-  <node id="3" lat="37.01" lon="127.019" />
-  <node id="4" lat="37.015" lon="127.01" />
-  <way id="10"><nd ref="1"/><nd ref="2"/><nd ref="3"/><tag k="highway" v="footway"/></way>
-  <way id="11"><nd ref="2"/><nd ref="4"/><tag k="highway" v="residential"/><tag k="foot" v="no"/></way>
-  <way id="12"><nd ref="1"/><nd ref="4"/><tag k="building" v="yes"/></way>
-</osm>`;
-
-test('regional OSM XML becomes a clipped walking graph and keeps access restrictions out', () => {
-  const parsed = parseOSMXml(xml);
-  assert.equal(parsed.nodes.size, 4);
-  assert.equal(parsed.ways.length, 3);
-  const graph = buildRegionalGraph(xml, { query: '테스트 지역', place, bbox });
-  assert.equal(graph.edges.length, 2);
-  assert.equal(graph.nodes.length, 3);
-  assert.ok(graph.edges.every(edge => edge.sourceId.startsWith('10:')));
-  assert.ok(graph.edges.every(edge => edge.geometry.flat().every(Number.isFinite)));
-  assert.ok(graph.edges.every(edge => edge.distance > 0));
-
-  const engine = makeEngine(graph);
-  const start = engine.nearest([127.001, 37.01]);
-  const end = engine.nearest([127.019, 37.01]);
-  const route = engine.recommendFromSnaps(start, end);
-  assert.ok(route.shortest.distance > 1500 && route.shortest.distance < 1700);
-  assert.deepEqual(route.shortest.geometry[0], start.p);
-  assert.deepEqual(route.shortest.geometry.at(-1), end.p);
-});
-
-test('regional segments crossing the search box are clipped to its bounds', () => {
-  const crossingXml = `<osm><node id="1" lat="37.01" lon="126.99"/><node id="2" lat="37.01" lon="127.01"/><way id="20"><nd ref="1"/><nd ref="2"/><tag k="highway" v="residential"/></way></osm>`;
-  const graph = buildRegionalGraph(crossingXml, { query: '테스트 지역', place, bbox });
-  assert.equal(graph.edges.length, 1);
-  assert.deepEqual(graph.edges[0].geometry[0], [127, 37.01]);
-  assert.deepEqual(graph.edges[0].geometry[1], [127.01, 37.01]);
-});
-
-test('regional bbox is centered and sized in meters for Korean latitudes', () => {
+test('region bounds cover a centered local search area at Korean latitudes', () => {
   const [west, south, east, north] = boundsAround(128.6, 35.8, 1500);
   assert.ok(Math.abs((east + west) / 2 - 128.6) < 1e-6);
   assert.ok(Math.abs((north + south) / 2 - 35.8) < 1e-6);
   assert.ok(east - west > north - south);
+  assert.ok(east - west < 0.04 && north - south < 0.04);
+});
+
+test('region search rejects non-Korean results and returns Korean places', async () => {
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = async () => new Response(JSON.stringify({
+    features: [
+      { geometry: { coordinates: [139.7, 35.6] }, properties: { countrycode: 'JP' } },
+      { geometry: { coordinates: [128.6, 35.8] }, properties: { countrycode: 'KR', name: '서면' } },
+    ],
+  }), { status: 200, headers: { 'Content-Type': 'application/json' } });
+  try {
+    const place = await searchRegion('부산 서면');
+    assert.equal(place.properties.name, '서면');
+    assert.deepEqual(place.geometry.coordinates, [128.6, 35.8]);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+test('regional graph endpoint returns a routable graph and records the active area', async () => {
+  const originalFetch = globalThis.fetch;
+  const bbox = boundsAround(127.13, 37.54);
+  const graph = {
+    meta: { region: '지역', bbox, boundary: [], retrieved: '2026-10-31', audit: {}, radiiMeters: { lamp: 30, cctv: 50 } },
+    nodes: [
+      { id: 0, p: [127.13, 37.54] },
+      { id: 1, p: [127.131, 37.54] },
+    ],
+    edges: [{
+      id: 0, sourceId: 'way-1', a: 0, b: 1,
+      geometry: [[127.13, 37.54], [127.131, 37.54]],
+      distance: meters([127.13, 37.54], [127.131, 37.54]),
+      quality: [0, 0, 0], crossing: false, area: '보행로',
+    }],
+    facilities: [], places: [],
+  };
+  globalThis.fetch = async url => {
+    const parsed = new URL(url);
+    assert.equal(parsed.pathname, '/api/region-network');
+    assert.equal(parsed.searchParams.get('region'), '시험 지역');
+    return new Response(JSON.stringify(graph), { status: 200, headers: { 'Content-Type': 'application/json' } });
+  };
+  try {
+    const place = { geometry: { coordinates: [127.13, 37.54] }, properties: { name: '시험 지역' } };
+    const loaded = await loadRegionalGraph('시험 지역', place);
+    const engine = makeEngine(loaded);
+    const edge = engine.activeEdges[0];
+    const result = engine.recommendFromSnaps(engine.nearest(edge.geometry[0]), engine.nearest(edge.geometry[1]));
+    assert.equal(loaded.regional.query, '시험 지역');
+    assert.match(loaded.meta.region, /시험 지역/);
+    assert.equal(loaded.meta.facilityCoverageAvailable, false);
+    assert.ok(result.shortest.distance > 0);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
 });
